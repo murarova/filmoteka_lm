@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My awesome title 🚀</title>
+  </head>
+  <body>
+    <script>
+      const search = document.location.search;
+      if (!search) {
+        document.location.href = '/';
+      }
+      const params = search.slice(1);
+      document.location.href = `/?redirected=true&page=library&${params}`;
+    </script>
+    <h1>LIBRARY</h1>
+  </body>
+</html>
