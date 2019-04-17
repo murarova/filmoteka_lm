@@ -1,3 +1,8 @@
 import '../styles/style.sass';
+import View from './view';
 
-document.write('Hello world!'); // REMOVE THIS IF DEVELOPMENT WAS STARTED
+const view = new View;
+
+
+
+
