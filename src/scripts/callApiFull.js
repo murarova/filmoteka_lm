@@ -2,7 +2,7 @@ const url = 'http://www.omdbapi.com/?i=';
 const apiKey = '&apikey=4095ed63'
 const full = ''
 
-function callApi(imdbID) {
+function callApiFull(imdbID) {
     fetch(url + imdbID + apiKey)
         .then(response => {
             if (response.ok) {

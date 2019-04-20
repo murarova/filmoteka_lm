@@ -4,6 +4,7 @@ export default class Controller {
     this.view = view;
 
     view.on("onInputFilmName", this.handleSearch.bind(this));
+    view.on("onFilmID", this.handleFilmID.bind(this));
   }
 
   handleSearch(text) {
@@ -16,5 +17,12 @@ export default class Controller {
     this.model.handleSearchQuery(text, page).then((resolve, reject) => {
       return this.view.updateCardsList(this.model);
     });
+  }
+
+  handleFilmID(id){
+    this.model.takeFilmInfo(id).then(
+      
+    )
+      
   }
 }

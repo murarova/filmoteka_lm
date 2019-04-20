@@ -407,17 +407,17 @@ export default class View extends EventEmitter {
   }
   //open Film page
   openFilmPage(event){
-    let id = getFilmID(event);
+    let id = this.getFilmID(event);
     // console.log("id=", id);
     //return id;
   }
-  getFilmID(){
+  getFilmID(event){
       // console.log("event=", event);
     let parenDiv=event.target.closest('div');
     // console.log("parenDiv=", parenDiv);
     let id = parenDiv.getAttribute('id');
-    // console.log("id=", id);
-    return id;
+    console.log("id=", id);
+    return this.emit("onFilmID", id);
   }
 
   updatePagesButtons() {
