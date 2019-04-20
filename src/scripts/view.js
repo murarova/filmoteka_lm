@@ -315,6 +315,7 @@ export default class View extends EventEmitter {
     // console.log('model.queryFilmList=', model.queryFilmList);
     // const cardList = this.cardList(container);
     // console.log("model.queryFilmList=", model.queryFilmList);
+    
     const cardList = document.querySelector(".card-list");
 
     cardList.addEventListener('click', this.openFilmPage.bind(this));
@@ -324,9 +325,37 @@ export default class View extends EventEmitter {
     let items = [];
     model.queryFilmList.forEach(item => {
       let newCard = this.makeCard(item);
+      //   console.log("newCard=", newCard);
       items.push(newCard);
       cardList.append(newCard);
     });
+
+    // Работа с страницами поиска
+
+    // console.log("items=", items);
+    // console.log('items num = ', localStorage.getItem('num'));
+    // console.log('num pages = ', Math.ceil(localStorage.getItem('num') / 10))
+    // if (localStorage.getItem('numPages') > 1) {
+    // this.makeButton('Prev', cardList);
+
+    const next = document.createElement("button");
+    next.classList.add("button");
+    next.textContent = 'Prev';
+    cardList.append(next);
+    // this.makeButton('Prev', cardList);
+    const button = document.createElement("button");
+    button.classList.add("button");
+    button.textContent = localStorage.getItem('currPage') + ' / ' + localStorage.getItem('numPages');
+    cardList.append(button);
+    // this.makeButton('Next', cardList);
+    const prev = document.createElement("button");
+    prev.classList.add("button");
+    prev.textContent = 'Next';
+    prev.disabled = true;
+    cardList.append(prev);
+    // }
+
+    // cardList.append(items);
     // console.log("items=", items);
   }
   //open Film page
@@ -342,5 +371,9 @@ export default class View extends EventEmitter {
     let id = parenDiv.getAttribute('id');
     // console.log("id=", id);
     return id;
+  }
+
+  updatePagesButtons() {
+
   }
 }

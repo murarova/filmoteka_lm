@@ -71,14 +71,14 @@ export default class Model {
     return list.filter(film => id !== film.id);
   }
   //get queryFilmList from server
-  handleSearchQuery(query) {
+  handleSearchQuery(query, page) {
     this.lastQuery = query;
     this.filmoteka.lastQuery = this.lastQuery;
 
     // console.log('this.lastQuery =', this.lastQuery);
     // console.log('query=', query);
 
-    const searchResults = callApi(query);
+    const searchResults = callApi(query, page);
     searchResults.then(data => {
       // console.log('data=', data);
       // console.log('data.totalResults=', data.totalResults);
@@ -90,8 +90,13 @@ export default class Model {
         // console.log('this.queryFilmList =', this.queryFilmList);
         // console.log('this.lastQuery =', this.lastQuery);
         // console.log('this.filmoteka =', this.filmoteka);
+        // console.log('this.lastQueryTotal = ', this.lastQueryTotal);
         this.filmoteka.queryFilmList = this.queryFilmList;
         this.localStorageWrite(this.filmoteka);
+
+        // Работа с страницами поиска
+        localStorage.setItem('numPages', Math.ceil(this.lastQueryTotal / 10));
+        if (page == 1 || page == null) { localStorage.setItem('currPage', 1); } else { localStorage.setItem('currPage', page); }
       }
     });
     return searchResults;

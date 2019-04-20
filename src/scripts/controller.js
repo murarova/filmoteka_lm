@@ -11,4 +11,10 @@ export default class Controller {
       return this.view.updateCardsList(this.model);
     });
   }
+
+  handleNextPageSearch(text, page) {
+    this.model.handleSearchQuery(text, page).then((resolve, reject) => {
+      return this.view.updateCardsList(this.model);
+    });
+  }
 }
