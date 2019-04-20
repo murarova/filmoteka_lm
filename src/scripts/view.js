@@ -100,32 +100,30 @@ export default class View extends EventEmitter {
     // start routing
     myFilmoteka.addEventListener("click", e => {
       if (e.target.tagName !== "A") return;
-      //   this.makeCardPage(card);
       const state = {
         page: e.target.getAttribute("href")
       };
-      history.pushState(state, "", state.page);
-      //   updateState(state);
+
       const container = document.querySelector(".container");
       container.innerHTML = "";
       const myFils = this.makeFilmotekaPage();
       container.appendChild(myFils);
-
+      history.pushState(state, "", state.page);
+        // updateState(state);
       e.preventDefault();
     });
 
     mainPage.addEventListener("click", e => {
       if (e.target.tagName !== "A") return;
       this.clearStarMaintPage();
-      //   this.app = document.querySelector("#app");
       this.startPage();
       this.mainPage();
-      //   const state = {
-      //     page: e.target.getAttribute("href")
-      //   };
+        const state = {
+          page: e.target.getAttribute("href")
+        };
 
-      //   history.pushState(state, "", state.page);
-      //   updateState(state);
+        history.pushState(state, "", state.page);
+        // updateState(state);
       //   const container = document.querySelector('.container');
       //   container.innerHTML='';
       //   this.mainPage();
@@ -137,9 +135,9 @@ export default class View extends EventEmitter {
     //   const container = this.container(this.app);
     //   container.innerHTML = "123";
     // }
-    // window.addEventListener("popstate", function(e) {
-    //   updateState(e.state);
-    // });
+    window.addEventListener("popstate", function(e) {
+      updateState(e.state);
+    });
 
     // const content = {
     //   index:
@@ -166,8 +164,8 @@ export default class View extends EventEmitter {
     mainPage.classList.add("menu-link");
     myFilmoteka.classList.add("menu-link");
 
-    mainPage.setAttribute("href", "#");
-    myFilmoteka.setAttribute("href", "#");
+    mainPage.setAttribute("href", "main-page");
+    myFilmoteka.setAttribute("href", "myFilmoteka");
     logo.setAttribute("href", "#");
 
     logoSpanFirst.textContent = "film";
@@ -448,7 +446,7 @@ export default class View extends EventEmitter {
     button.classList.add("button");
     // for my filmoteka
     button.classList.add("btn-filmoteka");
-
+    button.classList.add("activ-btn");
     button.textContent = text;
     root.append(button);
   }
