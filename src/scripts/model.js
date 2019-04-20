@@ -1,18 +1,20 @@
-import callApi from './services/callApi';
+import callApi from "./services/callApi";
+import callApiFull from "./services/callApiFull";
+// import { resolve } from "dns";
 
 export default class Model {
   constructor() {
     //fields with films
-    this.queryFilmList = [], //last 10 film showed after search querry
-      this.viewLaterFilms = [],
-      this.viewedFilms = [],
-      this.favoriteFilms = [];
+    (this.queryFilmList = []), //last 10 film showed after search querry
+      (this.viewLaterFilms = []),
+      (this.viewedFilms = []),
+      (this.favoriteFilms = []);
     //last viewed film in detailed form
     this.lastFilm = {};
     //last query for search
-    this.lastQuery = '';
+    this.lastQuery = "";
     //total results in last query
-    this.lastQueryTotal = '';
+    this.lastQueryTotal = "";
     //object for writtting/reading to storage
     this.filmoteka = {
       queryFilmList: this.queryFilmList,
@@ -22,12 +24,12 @@ export default class Model {
       lastQuery: this.lastQuery,
       lastFilm: this.lastFilm
     };
-  };
+  }
   //check if local storage exists
-  localStorageAvailable(type = 'localStorage') {
+  localStorageAvailable(type = "localStorage") {
     try {
       let storage = window[type];
-      let x = '__storage_test__';
+      let x = "__storage_test__";
       storage.setItem(x, x);
       storage.removeItem(x);
       return true;
@@ -39,23 +41,24 @@ export default class Model {
   localStorageWrite(filmoteka) {
     if (this.localStorageAvailable) {
       try {
-        localStorage.setItem('filmoteka', JSON.stringify(this.filmoteka));
+        localStorage.setItem("filmoteka", JSON.stringify(this.filmoteka));
       } catch (error) {
-        console.log('Error during writing from local storage');
+        console.log("Error during writing from local storage");
         return null;
       }
-
     }
   }
   //read from local storage
   localStorageRead() {
     if (this.localStorageAvailable) {
       try {
-        let filmotekaFromLocalStorage = JSON.parse(localStorage.getItem("filmoteka"));
+        let filmotekaFromLocalStorage = JSON.parse(
+          localStorage.getItem("filmoteka")
+        );
         this.filmoteka = filmotekaFromLocalStorage;
         return arrayOfFilms;
       } catch (error) {
-        console.log('Local Storage is empty');
+        console.log("Local Storage is empty");
         return null;
       }
     }
@@ -63,7 +66,7 @@ export default class Model {
   //add film to list
   addFilmToList(listName, film) {
     this[listName].push(film);
-    console.log('listName=', this[listName]);
+    console.log("listName=", this[listName]);
     return this[listName].reverse();
   }
   //delete film from list
@@ -95,10 +98,28 @@ export default class Model {
         this.localStorageWrite(this.filmoteka);
 
         // Работа с страницами поиска
-        localStorage.setItem('numPages', Math.ceil(this.lastQueryTotal / 10));
-        if (page == 1 || page == null) { localStorage.setItem('currPage', 1); } else { localStorage.setItem('currPage', page); }
+        localStorage.setItem("numPages", Math.ceil(this.lastQueryTotal / 10));
+        if (page == 1 || page == null) {
+          localStorage.setItem("currPage", 1);
+        } else {
+          localStorage.setItem("currPage", page);
+        }
       }
     });
     return searchResults;
+  }
+  //take ifo about film
+  takeFilmInfo(id) {
+    // console.log('id in model=', id);
+
+    // this.filmoteka.lastFilm = this.lastFilm;
+    // this.localStorageWrite(this.filmoteka);
+    let filmInfo = null;
+    return (filmInfo = callApiFull(id).then(data => {
+      // console.log("data=", data);
+      this.lastFilm = data;
+      // console.log("this.lastFilm=", this.lastFilm);
+      return this.lastFilm;
+    }));
   }
 }
