@@ -149,14 +149,14 @@ export default class View extends EventEmitter {
 
     form(root) {
 
-        const form = document.createElement('form');
+        // const form = document.createElement('form');
         const input = document.createElement('input');
 
-        form.classList.add('form');
+        // form.classList.add('form');
         input.classList.add('input');
 
-        form.append(input);
-        root.append(form);
+        root.append(input);
+        // root.append(form);
     }
 
     title(root) {
@@ -300,16 +300,18 @@ export default class View extends EventEmitter {
     }
 
     updateCardsList(model) {
-        console.log('model in view', model);
+        // console.log('model in view', model);
         // console.log('model.queryFilmList=', model.queryFilmList);
         // console.log('lastQueryTotal=', lastQueryTotal);
+        // console.log('model.queryFilmList=', model.queryFilmList);
+        const cardList = this.cardList(container);
         console.log('model.queryFilmList=', model.queryFilmList);
-        if (model.queryFilmList && model.lastQueryTotal) {
-            const cardList = this.cardList(container);
-            model.queryFilmList.forEach(element => {
-                this.makeCard(element, cardList);
-            });
-        }
+        model.queryFilmList.forEach(
+            item=>{
+                console.log('item=', item);
+                // makeCard(item, cardList);
+            }
+        )
     }
 
 }
