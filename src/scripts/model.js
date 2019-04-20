@@ -72,11 +72,13 @@ export default class Model {
   }
   //get queryFilmList from server
   handleSearchQuery(query) {
-    // console.log('query=', query);
     this.lastQuery = query;
     this.filmoteka.lastQuery = this.lastQuery;
+
     // console.log('this.lastQuery =', this.lastQuery);
-    const searchResults = callApi(query, 100);
+    // console.log('query=', query);
+
+    const searchResults = callApi(query);
     searchResults.then(data => {
       // console.log('data=', data);
       // console.log('data.totalResults=', data.totalResults);
