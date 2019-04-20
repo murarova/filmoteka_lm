@@ -1,4 +1,9 @@
+
 import { EventEmitter } from "events";
+
+import debounce from "debounce";
+
+import noavailable from "../img/noavailable.png";
 
 // const card = {
 //     "Title": "Guardians of the Galaxy Vol. 2",
@@ -48,12 +53,13 @@ export default class View extends EventEmitter {
     this.app = document.querySelector("#app");
     this.startPage();
     this.mainPage();
-    // this.makeFilmotekaPage();
     // this.makeCardPage(card);
 
-    this.form = this.app.querySelector(".form");
-    // console.log('this.form=', this.form);
-    this.form.addEventListener("submit", this.handleSearch.bind(this));
+    this.input = this.app.querySelector(".input");
+    this.input.addEventListener(
+      "input",
+      debounce(this.onInput.bind(this), 300)
+    );
   }
 
   startPage() {
@@ -86,8 +92,8 @@ export default class View extends EventEmitter {
     const menuItemTwo = document.createElement("li");
     const mainPage = document.createElement("a");
     const myFilmoteka = document.createElement("a");
-
-    // start routing
+    
+     // start routing
     myFilmoteka.addEventListener("click", function(e) {
       if (e.target.tagName !== "A") return;
 
@@ -132,6 +138,7 @@ export default class View extends EventEmitter {
     //   contentSite.innerHTML = content[state.page];
     // }
     // end routing
+
     header.classList.add("header");
     logo.classList.add("logo");
     i.classList.add("logo-icon");
@@ -141,8 +148,8 @@ export default class View extends EventEmitter {
     mainPage.classList.add("menu-link");
     myFilmoteka.classList.add("menu-link");
 
-    mainPage.setAttribute("href", "mainPage");
-    myFilmoteka.setAttribute("href", "filmoteka");
+    mainPage.setAttribute("href", "#");
+    myFilmoteka.setAttribute("href", "#");
     logo.setAttribute("href", "#");
 
     logoSpanFirst.textContent = "film";
@@ -190,14 +197,11 @@ export default class View extends EventEmitter {
   }
 
   form(root) {
-    const form = document.createElement("form");
     const input = document.createElement("input");
 
-    form.classList.add("form");
     input.classList.add("input");
 
-    form.append(input);
-    root.append(form);
+    root.append(input);
   }
 
   title(root) {
@@ -220,18 +224,27 @@ export default class View extends EventEmitter {
     // this.makeCard(a, cardList);
   }
 
-  makeCard(card, root) {
+  makeCard(card) {
+    // console.log("inside makeCard");
+    console.log("card=", card);
+
     const item = document.createElement("div");
     const title = document.createElement("p");
     const img = document.createElement("img");
     const link = document.createElement("a");
+
+    item.setAttribute('id', card.imdbID);
 
     item.classList.add("item");
     title.classList.add("card-title");
     img.classList.add("image");
     link.classList.add("card-link");
 
-    img.setAttribute("src", card.Poster);
+    let imgSrc;
+    card.Poster === "N/A" ? (imgSrc = noavailable) : (imgSrc = card.Poster);
+
+    img.setAttribute("src", imgSrc);
+
     link.setAttribute("href", "#");
 
     title.textContent = card.Title;
@@ -240,8 +253,7 @@ export default class View extends EventEmitter {
     link.append(title);
 
     link.append(img);
-    root.append(item);
-
+    // root.append(item);
     return item;
   }
 
@@ -275,11 +287,12 @@ export default class View extends EventEmitter {
     img.classList.add("card-image");
     cardInfo.classList.add("card-info");
     cardList.classList.add("card-info__list");
-
-    //
     buttons.classList.add("buttons");
 
-    img.setAttribute("src", card.Poster);
+    let imgSrc;
+    card.Poster === "N/A" ? (imgSrc = noavailable) : (imgSrc = card.Poster);
+
+    img.setAttribute("src", imgSrc);
 
     description.textContent = card.Plot;
     cardTitle.textContent = card.Title;
@@ -320,6 +333,99 @@ export default class View extends EventEmitter {
   makeButton(text, root) {
     const button = document.createElement("button");
     button.classList.add("button");
+    button.textContent = text;
+    root.append(button);
+  }
+
+  //handle search methods
+  clearInput(event) {
+    return (event.target.value = "");
+  }
+  onInput(event) {
+    let inputText = event.target.value;
+    if (inputText === "") {
+      this.clearCardsList();
+    }
+    this.emit("onInputFilmName", inputText);
+  }
+  //clear search results
+  clearCardsList() {
+    const cardList = document.querySelector(".card-list");
+    cardList.innerHTML = "";
+    cardList.removeEventListener('click', this.openFilmPage.bind(this));
+  }
+  //render search results
+  updateCardsList(model) {
+    // console.log('model in view', model);
+    // console.log("model.queryFilmList=", model.queryFilmList);
+    // console.log('lastQueryTotal=', lastQueryTotal);
+    // console.log('model.queryFilmList=', model.queryFilmList);
+    // const cardList = this.cardList(container);
+    // console.log("model.queryFilmList=", model.queryFilmList);
+    
+    const cardList = document.querySelector(".card-list");
+
+    cardList.addEventListener('click', this.openFilmPage.bind(this));
+
+    this.clearCardsList();
+    model.queryFilmList;
+    let items = [];
+    model.queryFilmList.forEach(item => {
+      let newCard = this.makeCard(item);
+      //   console.log("newCard=", newCard);
+      items.push(newCard);
+      cardList.append(newCard);
+    });
+
+    // Работа с страницами поиска
+
+    // console.log("items=", items);
+    // console.log('items num = ', localStorage.getItem('num'));
+    // console.log('num pages = ', Math.ceil(localStorage.getItem('num') / 10))
+    // if (localStorage.getItem('numPages') > 1) {
+    // this.makeButton('Prev', cardList);
+
+    const next = document.createElement("button");
+    next.classList.add("button");
+    next.textContent = 'Prev';
+    cardList.append(next);
+    // this.makeButton('Prev', cardList);
+    const button = document.createElement("button");
+    button.classList.add("button");
+    button.textContent = localStorage.getItem('currPage') + ' / ' + localStorage.getItem('numPages');
+    cardList.append(button);
+    // this.makeButton('Next', cardList);
+    const prev = document.createElement("button");
+    prev.classList.add("button");
+    prev.textContent = 'Next';
+    prev.disabled = true;
+    cardList.append(prev);
+    // }
+
+    // cardList.append(items);
+    // console.log("items=", items);
+  }
+  //open Film page
+  openFilmPage(event){
+    let id = getFilmID(event);
+    // console.log("id=", id);
+    //return id;
+  }
+  getFilmID(){
+      // console.log("event=", event);
+    let parenDiv=event.target.closest('div');
+    // console.log("parenDiv=", parenDiv);
+    let id = parenDiv.getAttribute('id');
+    // console.log("id=", id);
+    return id;
+  }
+
+  updatePagesButtons() {
+
+  }
+    makeButton1(text, root) {
+    const button = document.createElement("button");
+    button.classList.add("button");
     // for my filmoteka
     button.classList.add("btn-filmoteka");
     button.textContent = text;
@@ -337,31 +443,5 @@ export default class View extends EventEmitter {
     line.classList.add("line");
     container.append(line);
   }
-
-  //handle search methods
-  clearInput(event) {
-    return (event.target[0].value = "");
-  }
-
-  handleSearch(event) {
-    event.preventDefault();
-    let input = event.target[0];
-    let inputFilmName = input.value;
-    this.emit("onInputFilmName", inputFilmName);
-    this.clearInput(event);
-    // console.log('inputFilmName=', inputFilmName);
-  }
-
-  updateCardsList(model) {
-    console.log("model in view", model);
-    // console.log('model.queryFilmList=', model.queryFilmList);
-    // console.log('lastQueryTotal=', lastQueryTotal);
-    console.log("model.queryFilmList=", model.queryFilmList);
-    if (model.queryFilmList && model.lastQueryTotal) {
-      const cardList = this.cardList(container);
-      model.queryFilmList.forEach(element => {
-        this.makeCard(element, cardList);
-      });
-    }
-  }
+  
 }
