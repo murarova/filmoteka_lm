@@ -1,5 +1,6 @@
 import callApi from "./services/callApi";
 import callApiFull from "./services/callApiFull";
+// import { resolve } from "dns";
 
 export default class Model {
   constructor() {
@@ -9,7 +10,7 @@ export default class Model {
       (this.viewedFilms = []),
       (this.favoriteFilms = []);
     //last viewed film in detailed form
-    this.lastFilm = "";
+    this.lastFilm = {};
     //last query for search
     this.lastQuery = "";
     //total results in last query
@@ -107,19 +108,18 @@ export default class Model {
     });
     return searchResults;
   }
+  //take ifo about film
   takeFilmInfo(id) {
     // console.log('id in model=', id);
-    // this.lastFilm = id;
+
     // this.filmoteka.lastFilm = this.lastFilm;
     // this.localStorageWrite(this.filmoteka);
-
-    const filmInfo = callApiFull(id);
-    return filmInfo;
-
-    // return filmInfo.then(
-    //   data=>{
-    //     console.log('data=', data);
-    //   }
-    //)
+    let filmInfo = null;
+    return (filmInfo = callApiFull(id).then(data => {
+      // console.log("data=", data);
+      this.lastFilm = data;
+      // console.log("this.lastFilm=", this.lastFilm);
+      return this.lastFilm;
+    }));
   }
 }

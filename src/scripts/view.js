@@ -1,4 +1,3 @@
-
 import { EventEmitter } from "events";
 
 import debounce from "debounce";
@@ -92,8 +91,8 @@ export default class View extends EventEmitter {
     const menuItemTwo = document.createElement("li");
     const mainPage = document.createElement("a");
     const myFilmoteka = document.createElement("a");
-    
-     // start routing
+
+    // start routing
     myFilmoteka.addEventListener("click", function(e) {
       if (e.target.tagName !== "A") return;
 
@@ -226,19 +225,22 @@ export default class View extends EventEmitter {
 
   makeCard(card) {
     // console.log("inside makeCard");
-    console.log("card=", card);
+    // console.log("card=", card);
 
     const item = document.createElement("div");
     const title = document.createElement("p");
     const img = document.createElement("img");
     const link = document.createElement("a");
 
-    item.setAttribute('id', card.imdbID);
+    // item.setAttribute('id', card.imdbID);
 
     item.classList.add("item");
     title.classList.add("card-title");
     img.classList.add("image");
     link.classList.add("card-link");
+
+    link.addEventListener("click", this.getFilmID.bind(this));
+    link.setAttribute("id", card.imdbID);
 
     let imgSrc;
     card.Poster === "N/A" ? (imgSrc = noavailable) : (imgSrc = card.Poster);
@@ -258,6 +260,7 @@ export default class View extends EventEmitter {
   }
 
   makeCardPage(card) {
+    console.log('inside makeCard');
     const container = this.container(this.app);
 
     const shownProp = {
@@ -352,7 +355,7 @@ export default class View extends EventEmitter {
   clearCardsList() {
     const cardList = document.querySelector(".card-list");
     cardList.innerHTML = "";
-    cardList.removeEventListener('click', this.openFilmPage.bind(this));
+    // cardList.removeEventListener('click', this.openFilmPage.bind(this));
   }
   //render search results
   updateCardsList(model) {
@@ -362,17 +365,19 @@ export default class View extends EventEmitter {
     // console.log('model.queryFilmList=', model.queryFilmList);
     // const cardList = this.cardList(container);
     // console.log("model.queryFilmList=", model.queryFilmList);
-    
+
     const cardList = document.querySelector(".card-list");
 
-    cardList.addEventListener('click', this.openFilmPage.bind(this));
+    // cardList.addEventListener('click', this.openFilmPage.bind(this));
 
     this.clearCardsList();
-    model.queryFilmList;
+    // model.queryFilmList;
+    // console.log("model.queryFilmList=", model.queryFilmList);
     let items = [];
     model.queryFilmList.forEach(item => {
+      // console.log("item=", item);
       let newCard = this.makeCard(item);
-      //   console.log("newCard=", newCard);
+      // console.log("newCard=", newCard);
       items.push(newCard);
       cardList.append(newCard);
     });
@@ -387,17 +392,20 @@ export default class View extends EventEmitter {
 
     const next = document.createElement("button");
     next.classList.add("button");
-    next.textContent = 'Prev';
+    next.textContent = "Prev";
     cardList.append(next);
     // this.makeButton('Prev', cardList);
     const button = document.createElement("button");
     button.classList.add("button");
-    button.textContent = localStorage.getItem('currPage') + ' / ' + localStorage.getItem('numPages');
+    button.textContent =
+      localStorage.getItem("currPage") +
+      " / " +
+      localStorage.getItem("numPages");
     cardList.append(button);
     // this.makeButton('Next', cardList);
     const prev = document.createElement("button");
     prev.classList.add("button");
-    prev.textContent = 'Next';
+    prev.textContent = "Next";
     prev.disabled = true;
     cardList.append(prev);
     // }
@@ -405,25 +413,9 @@ export default class View extends EventEmitter {
     // cardList.append(items);
     // console.log("items=", items);
   }
-  //open Film page
-  openFilmPage(event){
-    let id = this.getFilmID(event);
-    // console.log("id=", id);
-    //return id;
-  }
-  getFilmID(event){
-      // console.log("event=", event);
-    let parenDiv=event.target.closest('div');
-    // console.log("parenDiv=", parenDiv);
-    let id = parenDiv.getAttribute('id');
-    console.log("id=", id);
-    return this.emit("onFilmID", id);
-  }
 
-  updatePagesButtons() {
-
-  }
-    makeButton1(text, root) {
+  updatePagesButtons() {}
+  makeButton1(text, root) {
     const button = document.createElement("button");
     button.classList.add("button");
     // for my filmoteka
@@ -443,5 +435,19 @@ export default class View extends EventEmitter {
     line.classList.add("line");
     container.append(line);
   }
-  
+  //create film page
+  getFilmID(event) {
+    // console.log("event=", event);
+    // let parenDiv=event.target.closest('div');
+    // console.log("parenDiv=", parenDiv);
+    let target = event.target.closest("a");
+    // console.log("target=", target);
+    let id = target.getAttribute("id");
+    return this.emit("onFilmID", id);
+    // console.log("id=", id);
+  }
+  createFilmPage(data){
+    console.log('data in view=', data);
+    this.makeCardPage(data);
+  }
 }

@@ -8,7 +8,7 @@ export default class Controller {
   }
 
   handleSearch(text) {
-    this.model.handleSearchQuery(text).then((resolve, reject) => {
+    this.model.handleSearchQuery(text).then(() => {
       return this.view.updateCardsList(this.model);
     });
   }
@@ -19,10 +19,14 @@ export default class Controller {
     });
   }
 
-  handleFilmID(id){
-    this.model.takeFilmInfo(id).then(
-      
-    )
-      
+  handleFilmID(id) {
+    this.model
+      .takeFilmInfo(id)
+      .then(
+        data=>this.view.createFilmPage(data)
+     );
+    // console.log("this.model.takeFilmInfo(id)=", this.model.takeFilmInfo(id));
   }
 }
+// console.log("this.model=", this.model);
+//         return this.view.createFilmPage(this.model);
