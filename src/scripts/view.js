@@ -1,3 +1,4 @@
+
 import { EventEmitter } from "events";
 
 import debounce from "debounce";
@@ -91,6 +92,52 @@ export default class View extends EventEmitter {
     const menuItemTwo = document.createElement("li");
     const mainPage = document.createElement("a");
     const myFilmoteka = document.createElement("a");
+    
+     // start routing
+    myFilmoteka.addEventListener("click", function(e) {
+      if (e.target.tagName !== "A") return;
+
+      const state = {
+        page: e.target.getAttribute("href")
+      };
+      history.pushState(state, "", state.page);
+      //   updateState(state);
+      e.preventDefault();
+    });
+    mainPage.addEventListener("click", function(e) {
+      if (e.target.tagName !== "A") return;
+      const state = {
+        page: e.target.getAttribute("href")
+      };
+      history.pushState(state, "", state.page);
+      //   updateState(state);
+      e.preventDefault();
+    });
+
+    // function updateState(state) {
+    //   if (!state) return;
+    //   const container = this.container(this.app);
+    //   container.innerHTML = "123";
+    // }
+    // window.addEventListener("popstate", function(e) {
+    //   updateState(e.state);
+    // });
+
+    // const content = {
+    //   index:
+    //     "Render main",
+    //   library:
+    //     "Render library",
+    //   movie:
+    //     "Render movie"
+    // };
+    // const contentSite = document.querySelector(".content");
+
+    // function updateState(state) {
+    //   if (!state) return;
+    //   contentSite.innerHTML = content[state.page];
+    // }
+    // end routing
 
     header.classList.add("header");
     logo.classList.add("logo");
@@ -376,4 +423,25 @@ export default class View extends EventEmitter {
   updatePagesButtons() {
 
   }
+    makeButton1(text, root) {
+    const button = document.createElement("button");
+    button.classList.add("button");
+    // for my filmoteka
+    button.classList.add("btn-filmoteka");
+    button.textContent = text;
+    root.append(button);
+  }
+  makeFilmotekaPage() {
+    const container = this.container(this.app);
+    // const divBtn = document.createElement("div");
+
+    this.makeButton("Очередь просмотра", container);
+    this.makeButton("Избранные", container);
+    this.makeButton("Просмотренные", container);
+
+    const line = document.createElement("div");
+    line.classList.add("line");
+    container.append(line);
+  }
+  
 }
