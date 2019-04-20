@@ -175,8 +175,9 @@ export default class View extends EventEmitter {
     // this.makeCard(a, cardList);
   }
 
-  makeCard(card, root) {
-    
+  makeCard(card) {
+    console.log("inside makeCard");
+
     const item = document.createElement("div");
     const title = document.createElement("p");
     const img = document.createElement("img");
@@ -292,24 +293,22 @@ export default class View extends EventEmitter {
 
   updateCardsList(model) {
     // console.log('model in view', model);
-    console.log('model.queryFilmList=', model.queryFilmList);
+    // console.log("model.queryFilmList=", model.queryFilmList);
     // console.log('lastQueryTotal=', lastQueryTotal);
     // console.log('model.queryFilmList=', model.queryFilmList);
-
     // const cardList = this.cardList(container);
-
     // console.log("model.queryFilmList=", model.queryFilmList);
-    model.queryFilmList
+    const cardList = document.querySelector('.card-list');
+    model.queryFilmList;
     let items = [];
     model.queryFilmList.forEach(item => {
-    //   console.log("item=", item);
-      console.log("this.makeCard=", this.makeCard);
-
-      let newCard = this.makeCard(item, cardList);
-      console.log("newCard=", newCard);
+      let newCard = this.makeCard(item);
+    //   console.log("newCard=", newCard);
       items.push(newCard);
+      cardList.append(newCard);
     });
     console.log("items=", items);
+    // cardList.append(items);
   }
 }
 /*
