@@ -277,7 +277,7 @@ export default class View extends EventEmitter {
   }
 
   makeCardPage(card) {
-    console.log('inside makeCard');
+    // console.log('inside makeCard');
     const container = this.container(this.app);
 
     const shownProp = {
@@ -469,8 +469,11 @@ export default class View extends EventEmitter {
     return this.emit("onFilmID", id);
     // console.log("id=", id);
   }
+  //show film page
   createFilmPage(data){
-    console.log('data in view=', data);
+    // console.log('data in view=', data);
+    this.clearStarMaintPage();
+    this.startPage();
     this.makeCardPage(data);
   }
   //   activBtn(){
