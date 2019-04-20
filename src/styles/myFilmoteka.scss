@@ -4,6 +4,7 @@
   background-color: black;
   margin: 0 auto;
   display: block;
+//   margin-top: -1px;
 }
 .btn-filmoteka {
     border: solid 2px;
@@ -18,3 +19,9 @@
   border: solid 2px;
   
 }
+.activ-btn {
+    color: black;
+    background-color: white;
+    border: solid 2px;
+}
+  

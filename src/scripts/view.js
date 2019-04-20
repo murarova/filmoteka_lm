@@ -1,4 +1,3 @@
-
 import { EventEmitter } from "events";
 
 import debounce from "debounce";
@@ -53,6 +52,7 @@ export default class View extends EventEmitter {
     this.app = document.querySelector("#app");
     this.startPage();
     this.mainPage();
+    // this.makeFilmotekaPage();
     // this.makeCardPage(card);
 
     this.input = this.app.querySelector(".input");
@@ -63,10 +63,9 @@ export default class View extends EventEmitter {
   }
 
   startPage() {
-    this.header(app);
-    this.footer(app);
+    this.header(this.app);
+    this.footer(this.app);
   }
-
   container(root) {
     const container = document.createElement("div");
     container.classList.add("container");
@@ -92,25 +91,44 @@ export default class View extends EventEmitter {
     const menuItemTwo = document.createElement("li");
     const mainPage = document.createElement("a");
     const myFilmoteka = document.createElement("a");
-    
-     // start routing
-    myFilmoteka.addEventListener("click", function(e) {
-      if (e.target.tagName !== "A") return;
 
+// Очиска содержимого
+    clearStarMaintPage() {
+        this.app.innerHTML = "";
+      }
+    // start routing
+
+    myFilmoteka.addEventListener("click", e => {
+      if (e.target.tagName !== "A") return;
+      //   this.makeCardPage(card);
       const state = {
         page: e.target.getAttribute("href")
       };
       history.pushState(state, "", state.page);
       //   updateState(state);
+      const container = document.querySelector(".container");
+      container.innerHTML = "";
+      const myFils = this.makeFilmotekaPage();
+      container.appendChild(myFils);
+
       e.preventDefault();
     });
-    mainPage.addEventListener("click", function(e) {
+
+    mainPage.addEventListener("click", e => {
       if (e.target.tagName !== "A") return;
-      const state = {
-        page: e.target.getAttribute("href")
-      };
-      history.pushState(state, "", state.page);
+      this.clearStarMaintPage();
+      //   this.app = document.querySelector("#app");
+      this.startPage();
+      this.mainPage();
+      //   const state = {
+      //     page: e.target.getAttribute("href")
+      //   };
+
+      //   history.pushState(state, "", state.page);
       //   updateState(state);
+      //   const container = document.querySelector('.container');
+      //   container.innerHTML='';
+      //   this.mainPage();
       e.preventDefault();
     });
 
@@ -233,7 +251,7 @@ export default class View extends EventEmitter {
     const img = document.createElement("img");
     const link = document.createElement("a");
 
-    item.setAttribute('id', card.imdbID);
+    item.setAttribute("id", card.imdbID);
 
     item.classList.add("item");
     title.classList.add("card-title");
@@ -352,7 +370,7 @@ export default class View extends EventEmitter {
   clearCardsList() {
     const cardList = document.querySelector(".card-list");
     cardList.innerHTML = "";
-    cardList.removeEventListener('click', this.openFilmPage.bind(this));
+    cardList.removeEventListener("click", this.openFilmPage.bind(this));
   }
   //render search results
   updateCardsList(model) {
@@ -362,10 +380,10 @@ export default class View extends EventEmitter {
     // console.log('model.queryFilmList=', model.queryFilmList);
     // const cardList = this.cardList(container);
     // console.log("model.queryFilmList=", model.queryFilmList);
-    
+
     const cardList = document.querySelector(".card-list");
 
-    cardList.addEventListener('click', this.openFilmPage.bind(this));
+    cardList.addEventListener("click", this.openFilmPage.bind(this));
 
     this.clearCardsList();
     model.queryFilmList;
@@ -387,17 +405,20 @@ export default class View extends EventEmitter {
 
     const next = document.createElement("button");
     next.classList.add("button");
-    next.textContent = 'Prev';
+    next.textContent = "Prev";
     cardList.append(next);
     // this.makeButton('Prev', cardList);
     const button = document.createElement("button");
     button.classList.add("button");
-    button.textContent = localStorage.getItem('currPage') + ' / ' + localStorage.getItem('numPages');
+    button.textContent =
+      localStorage.getItem("currPage") +
+      " / " +
+      localStorage.getItem("numPages");
     cardList.append(button);
     // this.makeButton('Next', cardList);
     const prev = document.createElement("button");
     prev.classList.add("button");
-    prev.textContent = 'Next';
+    prev.textContent = "Next";
     prev.disabled = true;
     cardList.append(prev);
     // }
@@ -406,42 +427,47 @@ export default class View extends EventEmitter {
     // console.log("items=", items);
   }
   //open Film page
-  openFilmPage(event){
+  openFilmPage(event) {
     let id = getFilmID(event);
     // console.log("id=", id);
     //return id;
   }
-  getFilmID(){
-      // console.log("event=", event);
-    let parenDiv=event.target.closest('div');
+  getFilmID() {
+    // console.log("event=", event);
+    let parenDiv = event.target.closest("div");
     // console.log("parenDiv=", parenDiv);
-    let id = parenDiv.getAttribute('id');
+    let id = parenDiv.getAttribute("id");
     // console.log("id=", id);
     return id;
   }
 
-  updatePagesButtons() {
+  updatePagesButtons() {}
 
-  }
-    makeButton1(text, root) {
+  makeButton1(text, root) {
     const button = document.createElement("button");
     button.classList.add("button");
     // for my filmoteka
     button.classList.add("btn-filmoteka");
+
     button.textContent = text;
     root.append(button);
   }
+
   makeFilmotekaPage() {
-    const container = this.container(this.app);
+    // const container = this.container(this.app);
     // const divBtn = document.createElement("div");
-
-    this.makeButton("Очередь просмотра", container);
-    this.makeButton("Избранные", container);
-    this.makeButton("Просмотренные", container);
-
     const line = document.createElement("div");
+    // const container = document.querySelector('.container');
+    // line.firstElementChild.classList.add("activ-btn");
+    this.makeButton1("Очередь просмотра", line);
+    this.makeButton1("Избранные", line);
+    this.makeButton1("Просмотренные", line);
+
     line.classList.add("line");
-    container.append(line);
+    return line;
+    // container.append(line);
   }
-  
+  //   activBtn(){
+
+  //   }
 }
