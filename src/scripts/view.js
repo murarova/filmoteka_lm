@@ -215,6 +215,11 @@ export default class View extends EventEmitter {
     const input = document.createElement("input");
 
     input.classList.add("input");
+    // adding event listener to input when it was created (fixed a bug)
+    input.addEventListener(
+      "input",
+      debounce(this.onInput.bind(this), 300)
+    );
 
     root.append(input);
   }
