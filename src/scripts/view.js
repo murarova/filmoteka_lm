@@ -52,6 +52,7 @@ export default class View extends EventEmitter {
     this.app = document.querySelector("#app");
     this.startPage();
     this.mainPage();
+    // this.makeFilmotekaPage();
     // this.makeCardPage(card);
 
     this.input = this.app.querySelector(".input");
@@ -62,10 +63,13 @@ export default class View extends EventEmitter {
   }
 
   startPage() {
-    this.header(app);
-    this.footer(app);
+    this.header(this.app);
+    this.footer(this.app);
   }
-
+  // Очистка содержимого
+  clearStarMaintPage(){
+    this.app.innerHTML = "";
+  }
   container(root) {
     const container = document.createElement("div");
     container.classList.add("container");
@@ -93,23 +97,35 @@ export default class View extends EventEmitter {
     const myFilmoteka = document.createElement("a");
 
     // start routing
-    myFilmoteka.addEventListener("click", function(e) {
+    myFilmoteka.addEventListener("click", e => {
       if (e.target.tagName !== "A") return;
-
       const state = {
         page: e.target.getAttribute("href")
       };
+
+      const container = document.querySelector(".container");
+      container.innerHTML = "";
+      const myFils = this.makeFilmotekaPage();
+      container.appendChild(myFils);
       history.pushState(state, "", state.page);
-      //   updateState(state);
+        // updateState(state);
       e.preventDefault();
     });
-    mainPage.addEventListener("click", function(e) {
+
+    mainPage.addEventListener("click", e => {
       if (e.target.tagName !== "A") return;
-      const state = {
-        page: e.target.getAttribute("href")
-      };
-      history.pushState(state, "", state.page);
-      //   updateState(state);
+      this.clearStarMaintPage();
+      this.startPage();
+      this.mainPage();
+        const state = {
+          page: e.target.getAttribute("href")
+        };
+
+        history.pushState(state, "", state.page);
+        // updateState(state);
+      //   const container = document.querySelector('.container');
+      //   container.innerHTML='';
+      //   this.mainPage();
       e.preventDefault();
     });
 
@@ -118,9 +134,9 @@ export default class View extends EventEmitter {
     //   const container = this.container(this.app);
     //   container.innerHTML = "123";
     // }
-    // window.addEventListener("popstate", function(e) {
-    //   updateState(e.state);
-    // });
+    window.addEventListener("popstate", function(e) {
+      updateState(e.state);
+    });
 
     // const content = {
     //   index:
@@ -147,8 +163,8 @@ export default class View extends EventEmitter {
     mainPage.classList.add("menu-link");
     myFilmoteka.classList.add("menu-link");
 
-    mainPage.setAttribute("href", "#");
-    myFilmoteka.setAttribute("href", "#");
+    mainPage.setAttribute("href", "main-page");
+    myFilmoteka.setAttribute("href", "myFilmoteka");
     logo.setAttribute("href", "#");
 
     logoSpanFirst.textContent = "film";
@@ -233,6 +249,7 @@ export default class View extends EventEmitter {
     const link = document.createElement("a");
 
     // item.setAttribute('id', card.imdbID);
+
 
     item.classList.add("item");
     title.classList.add("card-title");
@@ -356,6 +373,7 @@ export default class View extends EventEmitter {
     const cardList = document.querySelector(".card-list");
     cardList.innerHTML = "";
     // cardList.removeEventListener('click', this.openFilmPage.bind(this));
+
   }
   //render search results
   updateCardsList(model) {
@@ -369,6 +387,7 @@ export default class View extends EventEmitter {
     const cardList = document.querySelector(".card-list");
 
     // cardList.addEventListener('click', this.openFilmPage.bind(this));
+
 
     this.clearCardsList();
     // model.queryFilmList;
@@ -414,27 +433,31 @@ export default class View extends EventEmitter {
     // console.log("items=", items);
   }
 
-  updatePagesButtons() {}
   makeButton1(text, root) {
     const button = document.createElement("button");
     button.classList.add("button");
     // for my filmoteka
     button.classList.add("btn-filmoteka");
+    button.classList.add("activ-btn");
     button.textContent = text;
     root.append(button);
   }
+
   makeFilmotekaPage() {
-    const container = this.container(this.app);
+    // const container = this.container(this.app);
     // const divBtn = document.createElement("div");
-
-    this.makeButton("Очередь просмотра", container);
-    this.makeButton("Избранные", container);
-    this.makeButton("Просмотренные", container);
-
     const line = document.createElement("div");
+    // const container = document.querySelector('.container');
+    // line.firstElementChild.classList.add("activ-btn");
+    this.makeButton1("Очередь просмотра", line);
+    this.makeButton1("Избранные", line);
+    this.makeButton1("Просмотренные", line);
+
     line.classList.add("line");
-    container.append(line);
+    return line;
+    // container.append(line);
   }
+
   //create film page
   getFilmID(event) {
     // console.log("event=", event);
@@ -450,4 +473,8 @@ export default class View extends EventEmitter {
     console.log('data in view=', data);
     this.makeCardPage(data);
   }
+  //   activBtn(){
+
+  //   }
+
 }
