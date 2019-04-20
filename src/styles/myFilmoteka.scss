@@ -1,0 +1,20 @@
+.line {
+  width: 1000px;
+  height: 2px;
+  background-color: black;
+  margin: 0 auto;
+  display: block;
+}
+.btn-filmoteka {
+    border: solid 2px;
+    width: 200px;
+    margin-right:0;
+    margin: 0 auto
+  }
+  
+.btn-filmoteka:hover {
+  color: black;
+  background-color: white;
+  border: solid 2px;
+  
+}
