@@ -1,3 +1,10 @@
-import '../styles/style.sass';
+import "../styles/style.sass";
 
-document.write('Hello world!'); // REMOVE THIS IF DEVELOPMENT WAS STARTED
+import Model from "./model";
+import View from "./view";
+import Controller from "./controller";
+
+const view = new View();
+const model = new Model();
+
+new Controller(model, view);
