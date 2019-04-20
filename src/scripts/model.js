@@ -122,4 +122,10 @@ export default class Model {
       return this.lastFilm;
     }));
   }
+  //pagination
+  resolvePages(btnType, currPage, numPages){
+    console.log("btnType=", btnType);
+    console.log("currPage=", currPage);
+    console.log("numPages=", numPages);
+  }
 }

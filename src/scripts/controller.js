@@ -5,6 +5,7 @@ export default class Controller {
 
     view.on("onInputFilmName", this.handleSearch.bind(this));
     view.on("onFilmID", this.handleFilmID.bind(this));
+    view.on('onPagination', this.handlePaginationEvent.bind(this));
   }
 
   handleSearch(text) {
@@ -26,6 +27,13 @@ export default class Controller {
         data=>this.view.createFilmPage(data)
      );
     // console.log("this.model.takeFilmInfo(id)=", this.model.takeFilmInfo(id));
+  }
+
+  //handle Pagination
+  handlePaginationEvent (currPage, numPages){
+    this.model.resolvePages(currPage, numPages).then((resolve, reject) => {
+      return this.view.updateCardsList(this.model);
+    });
   }
 }
 // console.log("this.model=", this.model);
