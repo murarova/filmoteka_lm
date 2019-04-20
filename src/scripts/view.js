@@ -66,6 +66,10 @@ export default class View extends EventEmitter {
     this.header(this.app);
     this.footer(this.app);
   }
+  // Очистка содержимого
+  clearStarMaintPage(){
+    this.app.innerHTML = "";
+  }
   container(root) {
     const container = document.createElement("div");
     container.classList.add("container");
@@ -92,12 +96,8 @@ export default class View extends EventEmitter {
     const mainPage = document.createElement("a");
     const myFilmoteka = document.createElement("a");
 
-// Очиска содержимого
-    clearStarMaintPage() {
-        this.app.innerHTML = "";
-      }
-    // start routing
 
+    // start routing
     myFilmoteka.addEventListener("click", e => {
       if (e.target.tagName !== "A") return;
       //   this.makeCardPage(card);
