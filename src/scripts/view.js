@@ -1,45 +1,47 @@
-import { EventEmitter } from 'events';
+import {
+    EventEmitter
+} from 'events';
 
-    // const card = {
-    //     "Title": "Guardians of the Galaxy Vol. 2",
-    //     "Year": "2017",
-    //     "Rated": "PG-13",
-    //     "Released": "05 May 2017",
-    //     "Runtime": "136 min",
-    //     "Genre": "Action, Adventure, Comedy, Sci-Fi",
-    //     "Director": "James Gunn",
-    //     "Writer": "James Gunn, Dan Abnett (based on the Marvel comics by), Andy Lanning (based on the Marvel comics by), Steve Englehart (Star-Lord created by), Steve Gan (Star-Lord created by), Jim Starlin (Gamora and Drax created by), Stan Lee (Groot created by), Larry Lieber (Groot created by), Jack Kirby (Groot created by), Bill Mantlo (Rocket Raccoon created by), Keith Giffen (Rocket Raccoon created by), Steve Gerber (Howard the Duck created by), Val Mayerik (Howard the Duck created by)",
-    //     "Actors": "Chris Pratt, Zoe Saldana, Dave Bautista, Vin Diesel",
-    //     "Plot": "The Guardians struggle to keep together as a team while dealing with their personal family issues, notably Star-Lord's encounter with his father the ambitious celestial being Ego.",
-    //     "Language": "English",
-    //     "Country": "USA",
-    //     "Awards": "Nominated for 1 Oscar. Another 12 wins & 42 nominations.",
-    //     "Poster": "https://m.media-amazon.com/images/M/MV5BMTg2MzI1MTg3OF5BMl5BanBnXkFtZTgwNTU3NDA2MTI@._V1_SX300.jpg",
-    //     "Ratings": [
-    //     {
-    //     "Source": "Internet Movie Database",
-    //     "Value": "7.7/10"
-    //     },
-    //     {
-    //     "Source": "Rotten Tomatoes",
-    //     "Value": "83%"
-    //     },
-    //     {
-    //     "Source": "Metacritic",
-    //     "Value": "67/100"
-    //     }
-    //     ],
-    //     "Metascore": "67",
-    //     "imdbRating": "7.7",
-    //     "imdbVotes": "458,168",
-    //     "imdbID": "tt3896198",
-    //     "Type": "movie",
-    //     "DVD": "22 Aug 2017",
-    //     "BoxOffice": "$389,804,217",
-    //     "Production": "Walt Disney Pictures",
-    //     "Website": "https://marvel.com/guardians",
-    //     "Response": "True"
-    // };
+// const card = {
+//     "Title": "Guardians of the Galaxy Vol. 2",
+//     "Year": "2017",
+//     "Rated": "PG-13",
+//     "Released": "05 May 2017",
+//     "Runtime": "136 min",
+//     "Genre": "Action, Adventure, Comedy, Sci-Fi",
+//     "Director": "James Gunn",
+//     "Writer": "James Gunn, Dan Abnett (based on the Marvel comics by), Andy Lanning (based on the Marvel comics by), Steve Englehart (Star-Lord created by), Steve Gan (Star-Lord created by), Jim Starlin (Gamora and Drax created by), Stan Lee (Groot created by), Larry Lieber (Groot created by), Jack Kirby (Groot created by), Bill Mantlo (Rocket Raccoon created by), Keith Giffen (Rocket Raccoon created by), Steve Gerber (Howard the Duck created by), Val Mayerik (Howard the Duck created by)",
+//     "Actors": "Chris Pratt, Zoe Saldana, Dave Bautista, Vin Diesel",
+//     "Plot": "The Guardians struggle to keep together as a team while dealing with their personal family issues, notably Star-Lord's encounter with his father the ambitious celestial being Ego.",
+//     "Language": "English",
+//     "Country": "USA",
+//     "Awards": "Nominated for 1 Oscar. Another 12 wins & 42 nominations.",
+//     "Poster": "https://m.media-amazon.com/images/M/MV5BMTg2MzI1MTg3OF5BMl5BanBnXkFtZTgwNTU3NDA2MTI@._V1_SX300.jpg",
+//     "Ratings": [
+//     {
+//     "Source": "Internet Movie Database",
+//     "Value": "7.7/10"
+//     },
+//     {
+//     "Source": "Rotten Tomatoes",
+//     "Value": "83%"
+//     },
+//     {
+//     "Source": "Metacritic",
+//     "Value": "67/100"
+//     }
+//     ],
+//     "Metascore": "67",
+//     "imdbRating": "7.7",
+//     "imdbVotes": "458,168",
+//     "imdbID": "tt3896198",
+//     "Type": "movie",
+//     "DVD": "22 Aug 2017",
+//     "BoxOffice": "$389,804,217",
+//     "Production": "Walt Disney Pictures",
+//     "Website": "https://marvel.com/guardians",
+//     "Response": "True"
+// };
 
 export default class View extends EventEmitter {
     constructor() {
@@ -49,7 +51,12 @@ export default class View extends EventEmitter {
         this.startPage();
         this.mainPage();
         // this.makeCardPage(card);
- }
+
+        this.form = this.app.querySelector('.form');
+        // console.log('this.form=', this.form);
+        this.form.addEventListener('submit', this.handleSearch.bind(this));
+
+    }
 
     startPage() {
         this.header(app);
@@ -63,7 +70,7 @@ export default class View extends EventEmitter {
         return container;
     }
 
-    cardList(root){
+    cardList(root) {
         const cardList = document.createElement('div');
         cardList.classList.add('card-list');
         root.append(cardList);
@@ -130,7 +137,7 @@ export default class View extends EventEmitter {
         copySec.textContent = ' by ';
         team.textContent = 'team one';
 
-        team.setAttribute('href','#');
+        team.setAttribute('href', '#');
 
         root.append(footer);
         footer.append(copy);
@@ -164,7 +171,7 @@ export default class View extends EventEmitter {
         const container = this.container(this.app);
         this.title(container);
         this.form(container);
-        // const cardList = this.cardList(container);
+        const cardList = this.cardList(container);
         // this.makeCard(a, cardList);
         // this.makeCard(a, cardList);
         // this.makeCard(a, cardList);
@@ -178,7 +185,7 @@ export default class View extends EventEmitter {
         const title = document.createElement('p');
         const img = document.createElement('img');
         const link = document.createElement('a');
-        
+
         item.classList.add('item');
         title.classList.add('card-title');
         img.classList.add('image');
@@ -203,11 +210,11 @@ export default class View extends EventEmitter {
         const container = this.container(this.app);
 
         const shownProp = {
-            Awards: card.Awards, 
+            Awards: card.Awards,
             Rating: `${card.Ratings[0].Value}  (${card.imdbVotes} votes)`,
-            Actors: card.Actors, 
-            Country: card.Country, 
-            Genre: card.Genre, 
+            Actors: card.Actors,
+            Country: card.Country,
+            Genre: card.Genre,
             Runtime: card.Runtime
         };
 
@@ -253,18 +260,18 @@ export default class View extends EventEmitter {
         this.makeButton('Добавить в избранное', buttons);
 
         for (const prop in shownProp) {
-        
+
             if (shownProp.hasOwnProperty(prop)) {
 
                 const infoKey = document.createElement('li');
                 const keyValue = document.createElement('span');
-    
+
                 infoKey.textContent = `${prop}: `;
                 keyValue.textContent = shownProp[prop];
-    
+
                 infoKey.classList.add('info-key');
                 keyValue.classList.add('key-value');
-    
+
                 cardList.append(infoKey);
                 infoKey.append(keyValue);
             }
@@ -278,5 +285,31 @@ export default class View extends EventEmitter {
         root.append(button);
     }
 
-}
+    //handle search methods
+    clearInput(event) {
+        return event.target[0].value = '';
+    }
 
+    handleSearch(event) {
+        event.preventDefault();
+        let input = event.target[0];
+        let inputFilmName = input.value;
+        this.emit('onInputFilmName', inputFilmName);
+        this.clearInput(event);
+        // console.log('inputFilmName=', inputFilmName);
+    }
+
+    updateCardsList(model) {
+        console.log('model in view', model);
+        // console.log('model.queryFilmList=', model.queryFilmList);
+        // console.log('lastQueryTotal=', lastQueryTotal);
+        console.log('model.queryFilmList=', model.queryFilmList);
+        if (model.queryFilmList && model.lastQueryTotal) {
+            const cardList = this.cardList(container);
+            model.queryFilmList.forEach(element => {
+                this.makeCard(element, cardList);
+            });
+        }
+    }
+
+}
