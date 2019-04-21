@@ -102,13 +102,11 @@ export default class View extends EventEmitter {
       const state = {
         page: e.target.getAttribute("href")
       };
-
       const container = document.querySelector(".container");
       container.innerHTML = "";
       const myFils = this.makeFilmotekaPage();
       container.appendChild(myFils);
       history.pushState(state, "", state.page);
-      // updateState(state);
       e.preventDefault();
     });
 
@@ -120,38 +118,10 @@ export default class View extends EventEmitter {
       const state = {
         page: e.target.getAttribute("href")
       };
-
       history.pushState(state, "", state.page);
-      // updateState(state);
-      //   const container = document.querySelector('.container');
-      //   container.innerHTML='';
-      //   this.mainPage();
       e.preventDefault();
     });
 
-    // function updateState(state) {
-    //   if (!state) return;
-    //   const container = this.container(this.app);
-    //   container.innerHTML = "123";
-    // }
-    window.addEventListener("popstate", function (e) {
-      updateState(e.state);
-    });
-
-    // const content = {
-    //   index:
-    //     "Render main",
-    //   library:
-    //     "Render library",
-    //   movie:
-    //     "Render movie"
-    // };
-    // const contentSite = document.querySelector(".content");
-
-    // function updateState(state) {
-    //   if (!state) return;
-    //   contentSite.innerHTML = content[state.page];
-    // }
     // end routing
 
     header.classList.add("header");
@@ -259,13 +229,41 @@ export default class View extends EventEmitter {
 
     link.addEventListener("click", this.getFilmID.bind(this));
     link.setAttribute("id", card.imdbID);
+    // start routing for card==============================================
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      const idTarget = e.target.closest("a");
+      const idT = idTarget.getAttribute("id");
+      console.log(idT);
+      const state = {
+        page: idTarget.getAttribute("id")
+      };
+      console.log(state.page);
+      history.pushState(state, "", "movie.html?imdbID=" + state.page);
+      window.addEventListener("popstate", e => {
+        e.preventDefault();
+        if (document.location.pathname === "/") {
+          this.clearStarMaintPage();
+          this.startPage();
+          this.mainPage();
+          history.replaceState(state, "", "");
+        } else if (document.location.pathname === "/movie.html") {
+          this.emit("onFilmID", idT);
+          history.replaceState(state, "", "movie.html?imdbID=" + state.page);
+        }
 
+      });
+
+    });
+
+
+    // end routing for card===================================================
     let imgSrc;
     card.Poster === "N/A" ? (imgSrc = noavailable) : (imgSrc = card.Poster);
 
     img.setAttribute("src", imgSrc);
 
-    link.setAttribute("href", "#");
+    link.setAttribute("href", "");
 
     title.textContent = card.Title;
 
@@ -583,8 +581,6 @@ export default class View extends EventEmitter {
   }
 
   makeFilmotekaPage() {
-    // const container = this.container(this.app);
-    // const divBtn = document.createElement("div");
     const line = document.createElement("div");
     // const container = document.querySelector('.container');
     
@@ -593,8 +589,8 @@ export default class View extends EventEmitter {
     this.makeButton1("Просмотренные", line);
     line.firstElementChild.classList.add("activ-btn");
     line.classList.add("line");
+
     return line;
-    // container.append(line);
   }
   //switch marked buttons
   switchBtn(event){
