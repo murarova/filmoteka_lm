@@ -77,6 +77,7 @@ export default class Model {
   deleteFilmFromList(listName, id) {
     return list.filter(film => id !== film.id);
   }
+  
   //get queryFilmList from server
   handleSearchQuery(query, page = 1) {
     this.lastQuery = query;

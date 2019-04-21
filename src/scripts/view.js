@@ -134,7 +134,7 @@ export default class View extends EventEmitter {
     //   const container = this.container(this.app);
     //   container.innerHTML = "123";
     // }
-    window.addEventListener("popstate", function(e) {
+    window.addEventListener("popstate", function (e) {
       updateState(e.state);
     });
 
@@ -277,22 +277,13 @@ export default class View extends EventEmitter {
     return item;
   }
 
-  makeCardPage(card) {
+  makeCardPage(card, id) {
     // console.log('inside makeCard');
     const container = this.container(this.app);
 
-    // console.log("inside create film page function");
-    // console.log("card=", card);
-    // console.log("card=", card);
-
-    let cardRating =
-      card.Ratings.length !== 0
-        ? `${card.Ratings[0].Value}  (${card.imdbVotes} votes)`
-        : null;
-
     const shownProp = {
       Awards: card.Awards,
-      Rating: cardRating,
+      Rating: `${card.Ratings[0].Value}  (${card.imdbVotes} votes)`,
       Actors: card.Actors,
       Country: card.Country,
       Genre: card.Genre,
@@ -339,9 +330,10 @@ export default class View extends EventEmitter {
     cardInfo.append(cardList);
     cardInfo.append(buttons);
 
-    this.makeButton("Удалить из просмотренных", buttons);
-    this.makeButton("Запланировать просмотр", buttons);
-    this.makeButton("Добавить в избранное", buttons);
+    // this.makeButton("Удалить из просмотренных", buttons);
+    // this.makeButton("Запланировать просмотр", buttons);
+    // this.makeButton("Добавить в избранное", buttons);
+    this.createFilmPageButtons(id, buttons);
 
     for (const prop in shownProp) {
       if (shownProp.hasOwnProperty(prop)) {
@@ -358,6 +350,72 @@ export default class View extends EventEmitter {
         infoKey.append(keyValue);
       }
     }
+  }
+
+  createFilmPageButtons(id, root) {
+
+    const viewed = document.createElement('button');
+    viewed.classList.add('button');
+    viewed.addEventListener('click', this.viewedChange.bind(this, this.e, id));
+    if (this.viewedCheck(id)) { viewed.textContent = 'Добавить в просмотренные'; } else { viewed.textContent = 'Удалить из просмотренных'; }
+    root.append(viewed);
+
+    // const planed = document.createElement('button');
+    // planed.classList.add('button');
+    // // planed.addEventListener('click', this.planedChange.bind(this));
+    // // planed.textContent = ;
+    // if (this.planedCheck(id)) { planed.textContent = 'Добавить в запланированные'; } else { planed.textContent = 'Удалить из запланированных'; }
+    // root.append(planed);
+
+    // const favourites = document.createElement('button');
+    // favourites.classList.add('button');
+    // // favourites.addEventListener('click', this.favouritesChange.bind(this));
+    // // favourites.textContent = this.favouritesCheck(id);
+    // if (this.favouritesCheck(id)) { favourites.textContent = 'Добавить в избранное'; } else { favourites.textContent = 'Удалить из избранного'; }
+    // root.append(favourites);
+
+  }
+
+  viewedChange(e, id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.viewedFilms.includes(id)) {
+      data.viewedFilms.push(id);
+    }
+    else {
+      data.viewedFilms = data.viewedFilms.filter(function (ele) {
+        return ele !== id;
+      });
+    }
+    localStorage.setItem("filmoteka", JSON.stringify(data));
+    if (this.viewedCheck(id)) { e.target.textContent = 'Добавить в просмотренные'; } else { e.target.textContent = 'Удалить из просмотренных'; }
+  }
+  viewedCheck(id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.viewedFilms.includes(id)) {
+      return true;
+    } else { return false; }
+  }
+
+  // planedChange(event) {
+
+  //   // return;
+  // }
+  planedCheck(id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.viewLaterFilms.includes(id)) {
+      return true;
+    } else { return false; }
+  }
+
+  // favouritesChange(event) {
+
+  //   // return;
+  // }
+  favouritesCheck(id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.favoriteFilms.includes(id)) {
+      return true;
+    } else { return false; }
   }
 
   makeButton(text, root) {
@@ -442,16 +500,13 @@ export default class View extends EventEmitter {
     // next.classList.add("button");
     // next.textContent = "Next";
     // cardList.append(next);
-    const controls = document.createElement("div");
-    controls.classList.add("controls");
 
     const prev = this.createPaginationButton("Prev", currPage, numPages);
-    controls.append(prev);
+    cardList.append(prev);
     const pages = this.createPaginationButton("Pages", currPage, numPages);
-    controls.append(pages);
+    cardList.append(pages);
     const next = this.createPaginationButton("Next", currPage, numPages);
-    controls.append(next);
-    cardList.append(controls);
+    cardList.append(next);
     // this.makeButton('Prev', cardList);
 
     // this.makeButton('Next', cardList);
@@ -549,11 +604,11 @@ export default class View extends EventEmitter {
     // console.log("id=", id);
   }
   //show film page
-  createFilmPage(data) {
+  createFilmPage(data, id) {
     // console.log('data in view=', data);
     this.clearStarMaintPage();
     this.startPage();
-    this.makeCardPage(data);
+    this.makeCardPage(data, id);
   }
   //   activBtn(){
 
