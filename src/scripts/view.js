@@ -356,27 +356,59 @@ export default class View extends EventEmitter {
 
     const viewed = document.createElement('button');
     viewed.classList.add('button');
-    viewed.addEventListener('click', this.viewedChange.bind(this, this.e, id));
-    if (this.viewedCheck(id)) { viewed.textContent = 'Добавить в просмотренные'; } else { viewed.textContent = 'Удалить из просмотренных'; }
+    viewed.addEventListener('click', e => {
+      this.viewedChange(id)
+      if (this.viewedCheck(id)) {
+        e.target.textContent = 'Добавить в просмотренные';
+      } else {
+        e.target.textContent = 'Удалить из просмотренных';
+      }
+    })
+    if (this.viewedCheck(id)) {
+      viewed.textContent = 'Добавить в просмотренные';
+    } else {
+      viewed.textContent = 'Удалить из просмотренных';
+    }
     root.append(viewed);
 
-    // const planed = document.createElement('button');
-    // planed.classList.add('button');
-    // // planed.addEventListener('click', this.planedChange.bind(this));
-    // // planed.textContent = ;
-    // if (this.planedCheck(id)) { planed.textContent = 'Добавить в запланированные'; } else { planed.textContent = 'Удалить из запланированных'; }
-    // root.append(planed);
+    const planed = document.createElement('button');
+    planed.classList.add('button');
+    planed.addEventListener('click', e => {
+      this.planedChange(id);
+      if (this.planedCheck(id)) {
+        e.target.textContent = 'Добавить в запланированные';
+      } else {
+        e.target.textContent = 'Удалить из запланированных';
+      }
+    });
+    if (this.planedCheck(id)) {
+      planed.textContent = 'Добавить в запланированные';
+    } else {
+      planed.textContent = 'Удалить из запланированных';
+    }
+    root.append(planed);
 
-    // const favourites = document.createElement('button');
-    // favourites.classList.add('button');
-    // // favourites.addEventListener('click', this.favouritesChange.bind(this));
-    // // favourites.textContent = this.favouritesCheck(id);
-    // if (this.favouritesCheck(id)) { favourites.textContent = 'Добавить в избранное'; } else { favourites.textContent = 'Удалить из избранного'; }
-    // root.append(favourites);
+    const favourites = document.createElement('button');
+    favourites.classList.add('button');
+    favourites.addEventListener('click', e => {
+      this.favouritesChange(id);
+      if (this.favouritesCheck(id)) {
+        e.target.textContent = 'Добавить в избранное';
+      } else {
+        e.target.textContent = 'Удалить из избранного';
+      }
+    });
+    if (this.favouritesCheck(id)) {
+      favourites.textContent = 'Добавить в избранное';
+    } else {
+      favourites.textContent = 'Удалить из избранного';
+    }
+
+    root.append(favourites);
 
   }
 
-  viewedChange(e, id) {
+  viewedChange(id) {
     let data = JSON.parse(localStorage.getItem("filmoteka"));
     if (!data.viewedFilms.includes(id)) {
       data.viewedFilms.push(id);
@@ -387,35 +419,55 @@ export default class View extends EventEmitter {
       });
     }
     localStorage.setItem("filmoteka", JSON.stringify(data));
-    if (this.viewedCheck(id)) { e.target.textContent = 'Добавить в просмотренные'; } else { e.target.textContent = 'Удалить из просмотренных'; }
   }
+  planedChange(id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.viewLaterFilms.includes(id)) {
+      data.viewLaterFilms.push(id);
+    }
+    else {
+      data.viewLaterFilms = data.viewLaterFilms.filter(function (ele) {
+        return ele !== id;
+      });
+    }
+    localStorage.setItem("filmoteka", JSON.stringify(data));
+  }
+  favouritesChange(id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.favoriteFilms.includes(id)) {
+      data.favoriteFilms.push(id);
+    }
+    else {
+      data.favoriteFilms = data.favoriteFilms.filter(function (ele) {
+        return ele !== id;
+      });
+    }
+    localStorage.setItem("filmoteka", JSON.stringify(data));
+  }
+
   viewedCheck(id) {
     let data = JSON.parse(localStorage.getItem("filmoteka"));
     if (!data.viewedFilms.includes(id)) {
       return true;
-    } else { return false; }
+    } else {
+      return false;
+    }
   }
-
-  // planedChange(event) {
-
-  //   // return;
-  // }
   planedCheck(id) {
     let data = JSON.parse(localStorage.getItem("filmoteka"));
     if (!data.viewLaterFilms.includes(id)) {
       return true;
-    } else { return false; }
+    } else {
+      return false;
+    }
   }
-
-  // favouritesChange(event) {
-
-  //   // return;
-  // }
   favouritesCheck(id) {
     let data = JSON.parse(localStorage.getItem("filmoteka"));
     if (!data.favoriteFilms.includes(id)) {
       return true;
-    } else { return false; }
+    } else {
+      return false;
+    }
   }
 
   makeButton(text, root) {
