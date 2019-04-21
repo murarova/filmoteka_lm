@@ -275,7 +275,7 @@ export default class View extends EventEmitter {
     return item;
   }
 
-  makeCardPage(card) {
+  makeCardPage(card, id) {
     // console.log('inside makeCard');
     const container = this.container(this.app);
 
@@ -328,9 +328,10 @@ export default class View extends EventEmitter {
     cardInfo.append(cardList);
     cardInfo.append(buttons);
 
-    this.makeButton("Удалить из просмотренных", buttons);
-    this.makeButton("Запланировать просмотр", buttons);
-    this.makeButton("Добавить в избранное", buttons);
+    // this.makeButton("Удалить из просмотренных", buttons);
+    // this.makeButton("Запланировать просмотр", buttons);
+    // this.makeButton("Добавить в избранное", buttons);
+    this.createFilmPageButtons(id, buttons);
 
     for (const prop in shownProp) {
       if (shownProp.hasOwnProperty(prop)) {
@@ -347,6 +348,72 @@ export default class View extends EventEmitter {
         infoKey.append(keyValue);
       }
     }
+  }
+
+  createFilmPageButtons(id, root) {
+
+    const viewed = document.createElement('button');
+    viewed.classList.add('button');
+    viewed.addEventListener('click', this.viewedChange.bind(this, this.e, id));
+    if (this.viewedCheck(id)) { viewed.textContent = 'Добавить в просмотренные'; } else { viewed.textContent = 'Удалить из просмотренных'; }
+    root.append(viewed);
+
+    // const planed = document.createElement('button');
+    // planed.classList.add('button');
+    // // planed.addEventListener('click', this.planedChange.bind(this));
+    // // planed.textContent = ;
+    // if (this.planedCheck(id)) { planed.textContent = 'Добавить в запланированные'; } else { planed.textContent = 'Удалить из запланированных'; }
+    // root.append(planed);
+
+    // const favourites = document.createElement('button');
+    // favourites.classList.add('button');
+    // // favourites.addEventListener('click', this.favouritesChange.bind(this));
+    // // favourites.textContent = this.favouritesCheck(id);
+    // if (this.favouritesCheck(id)) { favourites.textContent = 'Добавить в избранное'; } else { favourites.textContent = 'Удалить из избранного'; }
+    // root.append(favourites);
+
+  }
+
+  viewedChange(e, id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.viewedFilms.includes(id)) {
+      data.viewedFilms.push(id);
+    }
+    else {
+      data.viewedFilms = data.viewedFilms.filter(function (ele) {
+        return ele !== id;
+      });
+    }
+    localStorage.setItem("filmoteka", JSON.stringify(data));
+    if (this.viewedCheck(id)) { e.target.textContent = 'Добавить в просмотренные'; } else { e.target.textContent = 'Удалить из просмотренных'; }
+  }
+  viewedCheck(id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.viewedFilms.includes(id)) {
+      return true;
+    } else { return false; }
+  }
+
+  // planedChange(event) {
+
+  //   // return;
+  // }
+  planedCheck(id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.viewLaterFilms.includes(id)) {
+      return true;
+    } else { return false; }
+  }
+
+  // favouritesChange(event) {
+
+  //   // return;
+  // }
+  favouritesCheck(id) {
+    let data = JSON.parse(localStorage.getItem("filmoteka"));
+    if (!data.favoriteFilms.includes(id)) {
+      return true;
+    } else { return false; }
   }
 
   makeButton(text, root) {
@@ -473,7 +540,8 @@ export default class View extends EventEmitter {
   }
   createPaginationButton(btnName, currPage, numPages) {
     // console.log('object');
-    // console.log("btnName=", btnName);
+    // console.log("btnName=", btnName); 
+    //notactiveBtn
     const btn = document.createElement("button");
     btn.classList.add("button");
     btn.setAttribute("btnName", btnName);
@@ -484,15 +552,18 @@ export default class View extends EventEmitter {
       // console.log('this=',this);
       if (currPage === 1 && btnName === "Prev") {
         btn.disabled = true;
+        btn.classList.add("notactiveBtn");
       }
       if (currPage == numPages && btnName === "Next") {
         btn.disabled = true;
+        btn.classList.add("notactiveBtn");
       }
       btn.addEventListener("click", this.handlePagination.bind(this));
     }
     if (btnName === "Pages") {
       btn.textContent = currPage + " / " + numPages;
       btn.disabled = true;
+      btn.classList.add("notactiveBtn");
     }
     // console.log("btn in createPaginationButton=", btn);
     return btn;
@@ -503,19 +574,32 @@ export default class View extends EventEmitter {
     button.classList.add("button");
     // for my filmoteka
     button.classList.add("btn-filmoteka");
-    // button.classList.add("activ-btn");
+    //button.classList.add("activ-btn");
     button.textContent = text;
+    button.addEventListener('click', this.switchBtn.bind(this));
     root.append(button);
   }
 
   makeFilmotekaPage() {
     const line = document.createElement("div");
+    // const container = document.querySelector('.container');
+    
     this.makeButton1("Очередь просмотра", line);
     this.makeButton1("Избранные", line);
     this.makeButton1("Просмотренные", line);
+    line.firstElementChild.classList.add("activ-btn");
     line.classList.add("line");
 
     return line;
+  }
+  //switch marked buttons
+  switchBtn(event){
+    //console.log('event', event);
+    if (event.target.nodeName!=="BUTTON") return;
+    const parentNode = event.target.parentNode;
+    //console.log('parentNode=', parentNode);
+    parentNode.childNodes.forEach(node=>node.classList.remove('activ-btn'));
+    event.target.classList.add("activ-btn");
   }
 
   //create film page
@@ -530,11 +614,11 @@ export default class View extends EventEmitter {
     // console.log("id=", id);
   }
   //show film page
-  createFilmPage(data) {
+  createFilmPage(data, id) {
     // console.log('data in view=', data);
     this.clearStarMaintPage();
     this.startPage();
-    this.makeCardPage(data);
+    this.makeCardPage(data, id);
   }
   //   activBtn(){
 

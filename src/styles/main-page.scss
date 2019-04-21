@@ -71,6 +71,12 @@ img {
     padding-bottom: 90px;
 }
 
+.controls{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .item {
     width: 18%;
     margin-right: 2.5%;
