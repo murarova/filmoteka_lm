@@ -21,7 +21,9 @@ export default class Controller {
   }
 
   handleFilmID(id) {
-    this.model.takeFilmInfo(id).then(data => this.view.createFilmPage(data));
+    this.model.takeFilmInfo(id).then(data => {
+      this.view.createFilmPage(data, id); //this.view.createFilmPageButtons(id)
+    });
     // console.log("this.model.takeFilmInfo(id)=", this.model.takeFilmInfo(id));
   }
 
