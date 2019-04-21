@@ -281,9 +281,18 @@ export default class View extends EventEmitter {
     // console.log('inside makeCard');
     const container = this.container(this.app);
 
+    // console.log("inside create film page function");
+    // console.log("card=", card);
+    // console.log("card=", card);
+
+    let cardRating =
+      card.Ratings.length !== 0
+        ? `${card.Ratings[0].Value}  (${card.imdbVotes} votes)`
+        : null;
+
     const shownProp = {
       Awards: card.Awards,
-      Rating: `${card.Ratings[0].Value}  (${card.imdbVotes} votes)`,
+      Rating: cardRating,
       Actors: card.Actors,
       Country: card.Country,
       Genre: card.Genre,
@@ -433,13 +442,16 @@ export default class View extends EventEmitter {
     // next.classList.add("button");
     // next.textContent = "Next";
     // cardList.append(next);
+    const controls = document.createElement("div");
+    controls.classList.add("controls");
 
     const prev = this.createPaginationButton("Prev", currPage, numPages);
-    cardList.append(prev);
+    controls.append(prev);
     const pages = this.createPaginationButton("Pages", currPage, numPages);
-    cardList.append(pages);
+    controls.append(pages);
     const next = this.createPaginationButton("Next", currPage, numPages);
-    cardList.append(next);
+    controls.append(next);
+    cardList.append(controls);
     // this.makeButton('Prev', cardList);
 
     // this.makeButton('Next', cardList);

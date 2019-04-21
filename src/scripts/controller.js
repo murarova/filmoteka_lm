@@ -27,7 +27,7 @@ export default class Controller {
 
   //handle Pagination
   handlePaginationEvent(btnName, currPage, numPages) {
-    console.log("this.model=", this.model);
+    // console.log("this.model=", this.model);
     this.model.resolvePages(btnName, currPage, numPages).then((resolve, reject) => {
       return this.view.updateCardsList(this.model);
     });
