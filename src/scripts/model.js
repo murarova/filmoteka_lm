@@ -25,7 +25,8 @@ export default class Model {
       viewedFilms: this.viewedFilms,
       favoriteFilms: this.favoriteFilms,
       lastQuery: this.lastQuery,
-      lastPage: this.lastPage
+      lastPage: this.lastPage,
+      totalPages: this.lastQueryTotal
     };
   }
   //check if local storage exists
@@ -76,15 +77,19 @@ export default class Model {
   deleteFilmFromList(listName, id) {
     return list.filter(film => id !== film.id);
   }
+  
   //get queryFilmList from server
-  handleSearchQuery(query, page=1) {
+  handleSearchQuery(query, page = 1) {
     this.lastQuery = query;
     this.filmoteka.lastQuery = this.lastQuery;
 
     // console.log('this.lastQuery =', this.lastQuery);
     // console.log('query=', query);
 
-    const searchResults = callApi(query, (page = 1));
+    const searchResults = callApi(
+      query.replace(/(^\s*)|(\s*)$/g, ""),
+      (page = 1)
+    );
     searchResults.then(data => {
       // console.log('data=', data);
       // console.log('data.totalResults=', data.totalResults);
@@ -98,6 +103,7 @@ export default class Model {
         // console.log('this.lastQuery =', this.lastQuery);
         // console.log('this.filmoteka =', this.filmoteka);
         // console.log('this.lastQueryTotal = ', this.lastQueryTotal);
+        this.filmoteka.totalPages = Math.ceil(this.lastQueryTotal/10);
         this.filmoteka.queryFilmList = this.queryFilmList;
         this.localStorageWrite(this.filmoteka);
 
@@ -123,6 +129,9 @@ export default class Model {
       // console.log("data=", data);
       this.lastFilm = data;
       // console.log("this.lastFilm=", this.lastFilm);
+      this.filmoteka.totalPages = Math.ceil(this.lastQueryTotal/10);
+      this.filmoteka.lastFilm = this.lastFilm;
+      this.localStorageWrite(this.filmoteka);
       return this.lastFilm;
     }));
   }
@@ -141,11 +150,14 @@ export default class Model {
     // console.log("this.lastPage=", this.lastPage);
     // console.log("this.lastQuery=", this.lastQuery);
 
-    const searchResults = callApi(this.lastQuery, this.lastPage);
+    const searchResults = callApi(
+      this.lastQuery.replace(/(^\s*)|(\s*)$/g, ""),
+      this.lastPage
+    );
     searchResults.then(data => {
       // console.log('this.lastQuery=', this.lastQuery);
-      console.log('this.lastPage inside searchresults=', this.lastPage);
-      console.log('data=', data);
+      // console.log('this.lastPage inside searchresults=', this.lastPage);
+      // console.log('data=', data);
       // console.log('data.totalResults=', data.totalResults);
       // console.log('data.Search=', data.Search);
       if (data.Response) {
@@ -157,6 +169,8 @@ export default class Model {
         // console.log('this.lastQuery =', this.lastQuery);
         // console.log('this.filmoteka =', this.filmoteka);
         // console.log('this.lastQueryTotal = ', this.lastQueryTotal);
+        this.filmoteka.totalPages = Math.ceil(this.lastQueryTotal/10);
+        this.filmoteka.lastPage = this.lastPage;
         this.filmoteka.queryFilmList = this.queryFilmList;
         this.localStorageWrite(this.filmoteka);
       }

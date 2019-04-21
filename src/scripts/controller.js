@@ -21,14 +21,15 @@ export default class Controller {
   }
 
   handleFilmID(id) {
-    this.model.takeFilmInfo(id).then(data => this.view.createFilmPage(data));
-    // console.log("data in contrller=", data);
-    // console.log("id in contrller=", id);
+    this.model.takeFilmInfo(id).then(data => {
+      this.view.createFilmPage(data, id); //this.view.createFilmPageButtons(id)
+    });
+    // console.log("this.model.takeFilmInfo(id)=", this.model.takeFilmInfo(id));
   }
 
   //handle Pagination
   handlePaginationEvent(btnName, currPage, numPages) {
-    console.log("this.model=", this.model);
+    // console.log("this.model=", this.model);
     this.model.resolvePages(btnName, currPage, numPages).then((resolve, reject) => {
       return this.view.updateCardsList(this.model);
     });
