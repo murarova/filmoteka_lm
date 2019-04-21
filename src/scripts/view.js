@@ -408,11 +408,12 @@ export default class View extends EventEmitter {
     // if (localStorage.getItem('numPages') > 1) {
     // this.makeButton('Prev', cardList);
 
-    const currPage = localStorage.getItem("currPage");
-    const numPages = localStorage.getItem("numPages");
+    const currPage = model.lastPage;
+    const numPages = Math.ceil(model.lastQueryTotal / 10);
 
-    console.log("currPage=", currPage);
-    console.log("numPages=", numPages);
+    // console.log("currPage=", currPage);
+    // console.log("model.lastQueryTotal=", model.lastQueryTotal);
+    // console.log("numPages=", numPages);
 
     // const prev = document.createElement("button");
     // prev.classList.add("button");
@@ -438,7 +439,7 @@ export default class View extends EventEmitter {
     const pages = this.createPaginationButton("Pages", currPage, numPages);
     cardList.append(pages);
     const next = this.createPaginationButton("Next", currPage, numPages);
-    cardList.append(prev);
+    cardList.append(next);
     // this.makeButton('Prev', cardList);
 
     // this.makeButton('Next', cardList);
@@ -447,9 +448,9 @@ export default class View extends EventEmitter {
     // console.log("items=", items);
 
     //added pagination handler
-    console.log("prev=", prev);
-    console.log("button=", button);
-    console.log("next=", next);
+    // console.log("prev=", prev);
+    // console.log("button=", pages);
+    // console.log("next=", next);
 
     // next.addEventListener(
     //   "click",
@@ -460,32 +461,43 @@ export default class View extends EventEmitter {
     //   this.handlePagination("prev", currPage, numPages).bind(this)
     // );
   }
-
-  createPaginationButton(btnName, currPage, numPages) {
-    // console.log('object');
-    console.log("btnName=", btnName);
-    const btn = document.createElement("button");
-    btn.classList.add("button");
-    if (btnName === "Next" || btnName === "Prev") {
-      btn.textContent = "Next";
-      btn.addEventListener(
-        "click",
-        this.handlePagination(btnName, currPage, numPages).bind(this)
-      );
-    }
-    if (btnName === "Pages") {
-      button.textContent = currPage + " / " + numPages;
-      btn.disabled = true;
-    }
-    console.log("btn in createPaginationButton=", btn);
-    return btn;
-  }
-
-  handlePagination(btnType, currPage, numPages) {
-    // console.log("click, btnType=", btnType);
+  handlePagination(event) {
+    if (event.target.nodeName !== "BUTTON") return;
+    let btnType = event.target.attributes.btnname.value;
+    let currPage = event.target.attributes.currPage.value;
+    let numPages = event.target.attributes.numpages.value;
+    // console.log("event=",event);
+    // console.log("btnType=",btnType);
     // console.log("currPage=", currPage);
     // console.log("numPages=", numPages);
-    // return this.emit("onPagination", btnType, currPage, numPages);
+    // console.log("this=", this);
+    return this.emit("onPagination", btnType, currPage, numPages);
+  }
+  createPaginationButton(btnName, currPage, numPages) {
+    // console.log('object');
+    // console.log("btnName=", btnName);
+    const btn = document.createElement("button");
+    btn.classList.add("button");
+    btn.setAttribute("btnName", btnName);
+    btn.setAttribute("currPage", currPage);
+    btn.setAttribute("numPages", numPages);
+    if (btnName === "Next" || btnName === "Prev") {
+      btn.textContent = btnName;
+      // console.log('this=',this);
+      if (currPage === 1 && btnName === "Prev") {
+        btn.disabled = true;
+      }
+      if (currPage == numPages && btnName === "Next") {
+        btn.disabled = true;
+      }
+      btn.addEventListener("click", this.handlePagination.bind(this));
+    }
+    if (btnName === "Pages") {
+      btn.textContent = currPage + " / " + numPages;
+      btn.disabled = true;
+    }
+    // console.log("btn in createPaginationButton=", btn);
+    return btn;
   }
 
   makeButton1(text, root) {

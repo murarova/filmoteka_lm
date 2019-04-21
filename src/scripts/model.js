@@ -9,12 +9,15 @@ export default class Model {
       (this.viewLaterFilms = []),
       (this.viewedFilms = []),
       (this.favoriteFilms = []);
-    //last viewed film in detailed form
-    this.lastFilm = {};
+    //last page and total for pagination
+    (this.lastPage = 1),
+      //total results in last query
+      (this.lastQueryTotal = 1),
+      //last viewed film in detailed form
+      (this.lastFilm = {});
     //last query for search
     this.lastQuery = "";
-    //total results in last query
-    this.lastQueryTotal = "";
+
     //object for writtting/reading to storage
     this.filmoteka = {
       queryFilmList: this.queryFilmList,
@@ -22,7 +25,7 @@ export default class Model {
       viewedFilms: this.viewedFilms,
       favoriteFilms: this.favoriteFilms,
       lastQuery: this.lastQuery,
-      lastFilm: this.lastFilm
+      lastPage: this.lastPage
     };
   }
   //check if local storage exists
@@ -74,14 +77,14 @@ export default class Model {
     return list.filter(film => id !== film.id);
   }
   //get queryFilmList from server
-  handleSearchQuery(query, page) {
+  handleSearchQuery(query, page=1) {
     this.lastQuery = query;
     this.filmoteka.lastQuery = this.lastQuery;
 
     // console.log('this.lastQuery =', this.lastQuery);
     // console.log('query=', query);
 
-    const searchResults = callApi(query, page);
+    const searchResults = callApi(query, (page = 1));
     searchResults.then(data => {
       // console.log('data=', data);
       // console.log('data.totalResults=', data.totalResults);
@@ -89,6 +92,7 @@ export default class Model {
       if (data.Response) {
         this.queryFilmList = data.Search;
         this.lastQueryTotal = data.totalResults;
+        this.lastPage = page;
         // console.log('data.Search=', data.Search);
         // console.log('this.queryFilmList =', this.queryFilmList);
         // console.log('this.lastQuery =', this.lastQuery);
@@ -123,9 +127,40 @@ export default class Model {
     }));
   }
   //pagination
-  resolvePages(btnType, currPage, numPages){
-    console.log("btnType=", btnType);
-    console.log("currPage=", currPage);
-    console.log("numPages=", numPages);
+  resolvePages(btnType, currPage, numPages) {
+    // console.log("btnType=", btnType);
+    // console.log("currPage=", currPage);
+    // console.log("numPages=", numPages);
+    if (btnType === "Prev" && +currPage !== 1) {
+      this.lastPage = +currPage - 1;
+    } else this.lastPage;
+    if (btnType === "Next" && +currPage < +numPages) {
+      this.lastPage = +currPage + 1;
+    }
+
+    // console.log("this.lastPage=", this.lastPage);
+    // console.log("this.lastQuery=", this.lastQuery);
+
+    const searchResults = callApi(this.lastQuery, this.lastPage);
+    searchResults.then(data => {
+      // console.log('this.lastQuery=', this.lastQuery);
+      console.log('this.lastPage inside searchresults=', this.lastPage);
+      console.log('data=', data);
+      // console.log('data.totalResults=', data.totalResults);
+      // console.log('data.Search=', data.Search);
+      if (data.Response) {
+        this.queryFilmList = data.Search;
+        this.lastQueryTotal = data.totalResults;
+        //this.lastPage = page;
+        // console.log('data=', data);
+        // console.log('this.queryFilmList =', this.queryFilmList);
+        // console.log('this.lastQuery =', this.lastQuery);
+        // console.log('this.filmoteka =', this.filmoteka);
+        // console.log('this.lastQueryTotal = ', this.lastQueryTotal);
+        this.filmoteka.queryFilmList = this.queryFilmList;
+        this.localStorageWrite(this.filmoteka);
+      }
+    });
+    return searchResults;
   }
 }
