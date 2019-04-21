@@ -67,7 +67,7 @@ export default class View extends EventEmitter {
     this.footer(this.app);
   }
   // Очистка содержимого
-  clearStarMaintPage(){
+  clearStarMaintPage() {
     this.app.innerHTML = "";
   }
   container(root) {
@@ -96,23 +96,17 @@ export default class View extends EventEmitter {
     const mainPage = document.createElement("a");
     const myFilmoteka = document.createElement("a");
 
-
     // start routing
     myFilmoteka.addEventListener("click", e => {
       if (e.target.tagName !== "A") return;
       const state = {
         page: e.target.getAttribute("href")
       };
-
       const container = document.querySelector(".container");
       container.innerHTML = "";
       const myFils = this.makeFilmotekaPage();
       container.appendChild(myFils);
-      // container.addEventListener('click',e=>{
-      //   this.button.classList.remove("activ-btn");
-      //   });
       history.pushState(state, "", state.page);
-        // updateState(state);
       e.preventDefault();
     });
 
@@ -121,38 +115,13 @@ export default class View extends EventEmitter {
       this.clearStarMaintPage();
       this.startPage();
       this.mainPage();
-        const state = {
-          page: e.target.getAttribute("href")
-        };
-
-        history.pushState(state, "", state.page);
-        // updateState(state);
+      const state = {
+        page: e.target.getAttribute("href")
+      };
+      history.pushState(state, "", state.page);
       e.preventDefault();
     });
 
-    // function updateState(state) {
-    //   if (!state) return;
-    //   const container = this.container(this.app);
-    //   container.innerHTML = "123";
-    // }
-    window.addEventListener("popstate", function(e) {
-      updateState(e.state);
-    });
-
-    // const content = {
-    //   index:
-    //     "Render main",
-    //   library:
-    //     "Render library",
-    //   movie:
-    //     "Render movie"
-    // };
-    // const contentSite = document.querySelector(".content");
-
-    // function updateState(state) {
-    //   if (!state) return;
-    //   contentSite.innerHTML = content[state.page];
-    // }
     // end routing
 
     header.classList.add("header");
@@ -216,6 +185,8 @@ export default class View extends EventEmitter {
     const input = document.createElement("input");
 
     input.classList.add("input");
+    // adding event listener to input when it was created (fixed a bug)
+    input.addEventListener("input", debounce(this.onInput.bind(this), 300));
 
     root.append(input);
   }
@@ -242,26 +213,57 @@ export default class View extends EventEmitter {
 
   makeCard(card) {
     // console.log("inside makeCard");
-    console.log("card=", card);
+    // console.log("card=", card);
 
     const item = document.createElement("div");
     const title = document.createElement("p");
     const img = document.createElement("img");
     const link = document.createElement("a");
 
-    item.setAttribute("id", card.imdbID);
+    // item.setAttribute('id', card.imdbID);
 
     item.classList.add("item");
     title.classList.add("card-title");
     img.classList.add("image");
     link.classList.add("card-link");
 
+    link.addEventListener("click", this.getFilmID.bind(this));
+    link.setAttribute("id", card.imdbID);
+    // start routing for card==============================================
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      const idTarget = e.target.closest("a");
+      const idT = idTarget.getAttribute("id");
+      console.log(idT);
+      const state = {
+        page: idTarget.getAttribute("id")
+      };
+      console.log(state.page);
+      history.pushState(state, "", "movie.html?imdbID=" + state.page);
+      window.addEventListener("popstate", e => {
+        e.preventDefault();
+        if (document.location.pathname === "/") {
+          this.clearStarMaintPage();
+          this.startPage();
+          this.mainPage();
+          history.replaceState(state, "", "");
+        } else if (document.location.pathname === "/movie.html") {
+          this.emit("onFilmID", idT);
+          history.replaceState(state, "", "movie.html?imdbID=" + state.page);
+        }
+
+      });
+
+    });
+
+
+    // end routing for card===================================================
     let imgSrc;
     card.Poster === "N/A" ? (imgSrc = noavailable) : (imgSrc = card.Poster);
 
     img.setAttribute("src", imgSrc);
 
-    link.setAttribute("href", "#");
+    link.setAttribute("href", "");
 
     title.textContent = card.Title;
 
@@ -274,6 +276,7 @@ export default class View extends EventEmitter {
   }
 
   makeCardPage(card) {
+    // console.log('inside makeCard');
     const container = this.container(this.app);
 
     const shownProp = {
@@ -368,7 +371,7 @@ export default class View extends EventEmitter {
   clearCardsList() {
     const cardList = document.querySelector(".card-list");
     cardList.innerHTML = "";
-    cardList.removeEventListener("click", this.openFilmPage.bind(this));
+    // cardList.removeEventListener('click', this.openFilmPage.bind(this));
   }
   //render search results
   updateCardsList(model) {
@@ -381,14 +384,16 @@ export default class View extends EventEmitter {
 
     const cardList = document.querySelector(".card-list");
 
-    cardList.addEventListener("click", this.openFilmPage.bind(this));
+    // cardList.addEventListener('click', this.openFilmPage.bind(this));
 
     this.clearCardsList();
-    model.queryFilmList;
+    // model.queryFilmList;
+    // console.log("model.queryFilmList=", model.queryFilmList);
     let items = [];
     model.queryFilmList.forEach(item => {
+      // console.log("item=", item);
       let newCard = this.makeCard(item);
-      //   console.log("newCard=", newCard);
+      // console.log("newCard=", newCard);
       items.push(newCard);
       cardList.append(newCard);
     });
@@ -401,45 +406,97 @@ export default class View extends EventEmitter {
     // if (localStorage.getItem('numPages') > 1) {
     // this.makeButton('Prev', cardList);
 
-    const next = document.createElement("button");
-    next.classList.add("button");
-    next.textContent = "Prev";
+    const currPage = model.lastPage;
+    const numPages = Math.ceil(model.lastQueryTotal / 10);
+
+    // console.log("currPage=", currPage);
+    // console.log("model.lastQueryTotal=", model.lastQueryTotal);
+    // console.log("numPages=", numPages);
+
+    // const prev = document.createElement("button");
+    // prev.classList.add("button");
+    // prev.textContent = "Prev";
+    // prev.disabled = true;
+    // cardList.append(prev);
+
+    // const button = document.createElement("button");
+    // button.classList.add("button");
+    // button.textContent =
+    //   localStorage.getItem("currPage") +
+    //   " / " +
+    //   localStorage.getItem("numPages");
+    // cardList.append(button);
+
+    // const next = document.createElement("button");
+    // next.classList.add("button");
+    // next.textContent = "Next";
+    // cardList.append(next);
+
+    const prev = this.createPaginationButton("Prev", currPage, numPages);
+    cardList.append(prev);
+    const pages = this.createPaginationButton("Pages", currPage, numPages);
+    cardList.append(pages);
+    const next = this.createPaginationButton("Next", currPage, numPages);
     cardList.append(next);
     // this.makeButton('Prev', cardList);
-    const button = document.createElement("button");
-    button.classList.add("button");
-    button.textContent =
-      localStorage.getItem("currPage") +
-      " / " +
-      localStorage.getItem("numPages");
-    cardList.append(button);
+
     // this.makeButton('Next', cardList);
-    const prev = document.createElement("button");
-    prev.classList.add("button");
-    prev.textContent = "Next";
-    prev.disabled = true;
-    cardList.append(prev);
-    // }
 
     // cardList.append(items);
     // console.log("items=", items);
-  }
-  //open Film page
-  openFilmPage(event) {
-    let id = getFilmID(event);
-    // console.log("id=", id);
-    //return id;
-  }
-  getFilmID() {
-    // console.log("event=", event);
-    let parenDiv = event.target.closest("div");
-    // console.log("parenDiv=", parenDiv);
-    let id = parenDiv.getAttribute("id");
-    // console.log("id=", id);
-    return id;
-  }
 
-  updatePagesButtons() {}
+    //added pagination handler
+    // console.log("prev=", prev);
+    // console.log("button=", pages);
+    // console.log("next=", next);
+
+    // next.addEventListener(
+    //   "click",
+    //   this.handlePagination("next", currPage, numPages).bind(this)
+    // );
+    // prev.addEventListener(
+    //   "click",
+    //   this.handlePagination("prev", currPage, numPages).bind(this)
+    // );
+  }
+  handlePagination(event) {
+    if (event.target.nodeName !== "BUTTON") return;
+    let btnType = event.target.attributes.btnname.value;
+    let currPage = event.target.attributes.currPage.value;
+    let numPages = event.target.attributes.numpages.value;
+    // console.log("event=",event);
+    // console.log("btnType=",btnType);
+    // console.log("currPage=", currPage);
+    // console.log("numPages=", numPages);
+    // console.log("this=", this);
+    return this.emit("onPagination", btnType, currPage, numPages);
+  }
+  createPaginationButton(btnName, currPage, numPages) {
+    // console.log('object');
+    // console.log("btnName=", btnName);
+    const btn = document.createElement("button");
+    btn.classList.add("button");
+    btn.setAttribute("btnName", btnName);
+    btn.setAttribute("currPage", currPage);
+    btn.setAttribute("numPages", numPages);
+    if (btnName === "Next" || btnName === "Prev") {
+      btn.textContent = btnName;
+      // console.log('this=',this);
+      if (currPage === 1 && btnName === "Prev") {
+        btn.disabled = true;
+      }
+      if (currPage == numPages && btnName === "Next") {
+        btn.disabled = true;
+      }
+      btn.addEventListener("click", this.handlePagination.bind(this));
+    }
+    if (btnName === "Pages") {
+      btn.textContent = currPage + " / " + numPages;
+      btn.disabled = true;
+    }
+    // console.log("btn in createPaginationButton=", btn);
+    return btn;
+  }
 
   makeButton1(text, root) {
     const button = document.createElement("button");
@@ -449,7 +506,6 @@ export default class View extends EventEmitter {
     // button.classList.add("activ-btn");
     button.textContent = text;
     root.append(button);
-
   }
 
   makeFilmotekaPage() {
@@ -461,4 +517,26 @@ export default class View extends EventEmitter {
 
     return line;
   }
+
+  //create film page
+  getFilmID(event) {
+    // console.log("event=", event);
+    // let parenDiv=event.target.closest('div');
+    // console.log("parenDiv=", parenDiv);
+    let target = event.target.closest("a");
+    // console.log("target=", target);
+    let id = target.getAttribute("id");
+    return this.emit("onFilmID", id);
+    // console.log("id=", id);
+  }
+  //show film page
+  createFilmPage(data) {
+    // console.log('data in view=', data);
+    this.clearStarMaintPage();
+    this.startPage();
+    this.makeCardPage(data);
+  }
+  //   activBtn(){
+
+  //   }
 }
