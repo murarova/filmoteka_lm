@@ -67,7 +67,7 @@ export default class View extends EventEmitter {
     this.footer(this.app);
   }
   // Очистка содержимого
-  clearStarMaintPage(){
+  clearStarMaintPage() {
     this.app.innerHTML = "";
   }
   container(root) {
@@ -108,7 +108,7 @@ export default class View extends EventEmitter {
       const myFils = this.makeFilmotekaPage();
       container.appendChild(myFils);
       history.pushState(state, "", state.page);
-        // updateState(state);
+      // updateState(state);
       e.preventDefault();
     });
 
@@ -117,12 +117,12 @@ export default class View extends EventEmitter {
       this.clearStarMaintPage();
       this.startPage();
       this.mainPage();
-        const state = {
-          page: e.target.getAttribute("href")
-        };
+      const state = {
+        page: e.target.getAttribute("href")
+      };
 
-        history.pushState(state, "", state.page);
-        // updateState(state);
+      history.pushState(state, "", state.page);
+      // updateState(state);
       //   const container = document.querySelector('.container');
       //   container.innerHTML='';
       //   this.mainPage();
@@ -216,10 +216,7 @@ export default class View extends EventEmitter {
 
     input.classList.add("input");
     // adding event listener to input when it was created (fixed a bug)
-    input.addEventListener(
-      "input",
-      debounce(this.onInput.bind(this), 300)
-    );
+    input.addEventListener("input", debounce(this.onInput.bind(this), 300));
 
     root.append(input);
   }
@@ -254,7 +251,6 @@ export default class View extends EventEmitter {
     const link = document.createElement("a");
 
     // item.setAttribute('id', card.imdbID);
-
 
     item.classList.add("item");
     title.classList.add("card-title");
@@ -378,7 +374,6 @@ export default class View extends EventEmitter {
     const cardList = document.querySelector(".card-list");
     cardList.innerHTML = "";
     // cardList.removeEventListener('click', this.openFilmPage.bind(this));
-
   }
   //render search results
   updateCardsList(model) {
@@ -392,7 +387,6 @@ export default class View extends EventEmitter {
     const cardList = document.querySelector(".card-list");
 
     // cardList.addEventListener('click', this.openFilmPage.bind(this));
-
 
     this.clearCardsList();
     // model.queryFilmList;
@@ -414,28 +408,96 @@ export default class View extends EventEmitter {
     // if (localStorage.getItem('numPages') > 1) {
     // this.makeButton('Prev', cardList);
 
-    const next = document.createElement("button");
-    next.classList.add("button");
-    next.textContent = "Prev";
+    const currPage = model.lastPage;
+    const numPages = Math.ceil(model.lastQueryTotal / 10);
+
+    // console.log("currPage=", currPage);
+    // console.log("model.lastQueryTotal=", model.lastQueryTotal);
+    // console.log("numPages=", numPages);
+
+    // const prev = document.createElement("button");
+    // prev.classList.add("button");
+    // prev.textContent = "Prev";
+    // prev.disabled = true;
+    // cardList.append(prev);
+
+    // const button = document.createElement("button");
+    // button.classList.add("button");
+    // button.textContent =
+    //   localStorage.getItem("currPage") +
+    //   " / " +
+    //   localStorage.getItem("numPages");
+    // cardList.append(button);
+
+    // const next = document.createElement("button");
+    // next.classList.add("button");
+    // next.textContent = "Next";
+    // cardList.append(next);
+
+    const prev = this.createPaginationButton("Prev", currPage, numPages);
+    cardList.append(prev);
+    const pages = this.createPaginationButton("Pages", currPage, numPages);
+    cardList.append(pages);
+    const next = this.createPaginationButton("Next", currPage, numPages);
     cardList.append(next);
     // this.makeButton('Prev', cardList);
-    const button = document.createElement("button");
-    button.classList.add("button");
-    button.textContent =
-      localStorage.getItem("currPage") +
-      " / " +
-      localStorage.getItem("numPages");
-    cardList.append(button);
+
     // this.makeButton('Next', cardList);
-    const prev = document.createElement("button");
-    prev.classList.add("button");
-    prev.textContent = "Next";
-    prev.disabled = true;
-    cardList.append(prev);
-    // }
 
     // cardList.append(items);
     // console.log("items=", items);
+
+    //added pagination handler
+    // console.log("prev=", prev);
+    // console.log("button=", pages);
+    // console.log("next=", next);
+
+    // next.addEventListener(
+    //   "click",
+    //   this.handlePagination("next", currPage, numPages).bind(this)
+    // );
+    // prev.addEventListener(
+    //   "click",
+    //   this.handlePagination("prev", currPage, numPages).bind(this)
+    // );
+  }
+  handlePagination(event) {
+    if (event.target.nodeName !== "BUTTON") return;
+    let btnType = event.target.attributes.btnname.value;
+    let currPage = event.target.attributes.currPage.value;
+    let numPages = event.target.attributes.numpages.value;
+    // console.log("event=",event);
+    // console.log("btnType=",btnType);
+    // console.log("currPage=", currPage);
+    // console.log("numPages=", numPages);
+    // console.log("this=", this);
+    return this.emit("onPagination", btnType, currPage, numPages);
+  }
+  createPaginationButton(btnName, currPage, numPages) {
+    // console.log('object');
+    // console.log("btnName=", btnName);
+    const btn = document.createElement("button");
+    btn.classList.add("button");
+    btn.setAttribute("btnName", btnName);
+    btn.setAttribute("currPage", currPage);
+    btn.setAttribute("numPages", numPages);
+    if (btnName === "Next" || btnName === "Prev") {
+      btn.textContent = btnName;
+      // console.log('this=',this);
+      if (currPage === 1 && btnName === "Prev") {
+        btn.disabled = true;
+      }
+      if (currPage == numPages && btnName === "Next") {
+        btn.disabled = true;
+      }
+      btn.addEventListener("click", this.handlePagination.bind(this));
+    }
+    if (btnName === "Pages") {
+      btn.textContent = currPage + " / " + numPages;
+      btn.disabled = true;
+    }
+    // console.log("btn in createPaginationButton=", btn);
+    return btn;
   }
 
   makeButton1(text, root) {
@@ -475,7 +537,7 @@ export default class View extends EventEmitter {
     // console.log("id=", id);
   }
   //show film page
-  createFilmPage(data){
+  createFilmPage(data) {
     // console.log('data in view=', data);
     this.clearStarMaintPage();
     this.startPage();
@@ -484,5 +546,4 @@ export default class View extends EventEmitter {
   //   activBtn(){
 
   //   }
-
 }
