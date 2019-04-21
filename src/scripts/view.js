@@ -108,6 +108,9 @@ export default class View extends EventEmitter {
       container.innerHTML = "";
       const myFils = this.makeFilmotekaPage();
       container.appendChild(myFils);
+      // container.addEventListener('click',e=>{
+      //   this.button.classList.remove("activ-btn");
+      //   });
       history.pushState(state, "", state.page);
         // updateState(state);
       e.preventDefault();
@@ -124,9 +127,6 @@ export default class View extends EventEmitter {
 
         history.pushState(state, "", state.page);
         // updateState(state);
-      //   const container = document.querySelector('.container');
-      //   container.innerHTML='';
-      //   this.mainPage();
       e.preventDefault();
     });
 
@@ -446,26 +446,19 @@ export default class View extends EventEmitter {
     button.classList.add("button");
     // for my filmoteka
     button.classList.add("btn-filmoteka");
-    button.classList.add("activ-btn");
+    // button.classList.add("activ-btn");
     button.textContent = text;
     root.append(button);
+
   }
 
   makeFilmotekaPage() {
-    // const container = this.container(this.app);
-    // const divBtn = document.createElement("div");
     const line = document.createElement("div");
-    // const container = document.querySelector('.container');
-    // line.firstElementChild.classList.add("activ-btn");
     this.makeButton1("Очередь просмотра", line);
     this.makeButton1("Избранные", line);
     this.makeButton1("Просмотренные", line);
-
     line.classList.add("line");
-    return line;
-    // container.append(line);
-  }
-  //   activBtn(){
 
-  //   }
+    return line;
+  }
 }
