@@ -354,40 +354,41 @@ export default class View extends EventEmitter {
   }
 
   createFilmPageButtons(id, root) {
+    //viewLaterFilms
     const viewed = document.createElement("button");
     viewed.classList.add("button");
     viewed.addEventListener("click", e => {
       this.viewedChange(id);
       if (this.viewedCheck(id)) {
-        e.target.textContent = "Добавить в просмотренные";
+        e.target.textContent = "Отметить как просмотренный";
       } else {
         e.target.textContent = "Удалить из просмотренных";
       }
     });
     if (this.viewedCheck(id)) {
-      viewed.textContent = "Добавить в просмотренные";
+      viewed.textContent = "Отметить как просмотренный";
     } else {
       viewed.textContent = "Удалить из просмотренных";
     }
     root.append(viewed);
-
+    //viewedFilms
     const planed = document.createElement("button");
     planed.classList.add("button");
     planed.addEventListener("click", e => {
       this.planedChange(id);
       if (this.planedCheck(id)) {
-        e.target.textContent = "Добавить в запланированные";
+        e.target.textContent = "Запланировать просмотр";
       } else {
-        e.target.textContent = "Удалить из запланированных";
+        e.target.textContent = "Отменить просмотр";
       }
     });
     if (this.planedCheck(id)) {
-      planed.textContent = "Добавить в запланированные";
+      planed.textContent = "Запланировать просмотр";
     } else {
-      planed.textContent = "Удалить из запланированных";
+      planed.textContent = "Отменить просмотр";
     }
     root.append(planed);
-
+    //favoriteFilms
     const favourites = document.createElement("button");
     favourites.classList.add("button");
     favourites.addEventListener("click", e => {
@@ -406,6 +407,7 @@ export default class View extends EventEmitter {
 
     root.append(favourites);
   }
+  //add to some list function
 
   viewedChange(id) {
     let data = JSON.parse(localStorage.getItem("filmoteka"));

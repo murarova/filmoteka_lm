@@ -120,8 +120,7 @@ export default class Model {
   }
   //take ifo about film
   takeFilmInfo(id) {
-    console.log('id in model=', id);
-
+    // console.log('id in model=', id);
     // this.filmoteka.lastFilm = this.lastFilm;
     // this.localStorageWrite(this.filmoteka);
     let filmInfo = null;

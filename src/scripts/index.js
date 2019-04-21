@@ -27,7 +27,7 @@ function checkRedirect(hrefShare) {
       if (redirectPage === "movie") {
         const arr = hrefShare.split("mdbID=");
         const renderById = arr[1];
-        console.log(renderById);
+        // console.log(renderById);
         view.emit("onFilmID", renderById);
         history.replaceState({}, "", "/movie.html?imdbID=" + renderById);
       }
