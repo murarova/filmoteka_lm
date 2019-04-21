@@ -487,7 +487,8 @@ export default class View extends EventEmitter {
   }
   createPaginationButton(btnName, currPage, numPages) {
     // console.log('object');
-    // console.log("btnName=", btnName);
+    // console.log("btnName=", btnName); 
+    //notactiveBtn
     const btn = document.createElement("button");
     btn.classList.add("button");
     btn.setAttribute("btnName", btnName);
@@ -498,15 +499,18 @@ export default class View extends EventEmitter {
       // console.log('this=',this);
       if (currPage === 1 && btnName === "Prev") {
         btn.disabled = true;
+        btn.classList.add("notactiveBtn");
       }
       if (currPage == numPages && btnName === "Next") {
         btn.disabled = true;
+        btn.classList.add("notactiveBtn");
       }
       btn.addEventListener("click", this.handlePagination.bind(this));
     }
     if (btnName === "Pages") {
       btn.textContent = currPage + " / " + numPages;
       btn.disabled = true;
+      btn.classList.add("notactiveBtn");
     }
     // console.log("btn in createPaginationButton=", btn);
     return btn;
@@ -517,8 +521,9 @@ export default class View extends EventEmitter {
     button.classList.add("button");
     // for my filmoteka
     button.classList.add("btn-filmoteka");
-    button.classList.add("activ-btn");
+    //button.classList.add("activ-btn");
     button.textContent = text;
+    button.addEventListener('click', this.switchBtn.bind(this));
     root.append(button);
   }
 
@@ -527,14 +532,23 @@ export default class View extends EventEmitter {
     // const divBtn = document.createElement("div");
     const line = document.createElement("div");
     // const container = document.querySelector('.container');
-    // line.firstElementChild.classList.add("activ-btn");
+    
     this.makeButton1("Очередь просмотра", line);
     this.makeButton1("Избранные", line);
     this.makeButton1("Просмотренные", line);
-
+    line.firstElementChild.classList.add("activ-btn");
     line.classList.add("line");
     return line;
     // container.append(line);
+  }
+  //switch marked buttons
+  switchBtn(event){
+    //console.log('event', event);
+    if (event.target.nodeName!=="BUTTON") return;
+    const parentNode = event.target.parentNode;
+    //console.log('parentNode=', parentNode);
+    parentNode.childNodes.forEach(node=>node.classList.remove('activ-btn'));
+    event.target.classList.add("activ-btn");
   }
 
   //create film page
