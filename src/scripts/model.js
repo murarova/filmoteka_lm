@@ -82,9 +82,10 @@ export default class Model {
     this.filmoteka.lastQuery = this.lastQuery;
 
     // console.log('this.lastQuery =', this.lastQuery);
-    // console.log('query=', query);
+    // console.log('query=', query); 
 
-    const searchResults = callApi(query, (page = 1));
+
+    const searchResults = callApi(query.replace(/(^\s*)|(\s*)$/g, ''), (page = 1));
     searchResults.then(data => {
       // console.log('data=', data);
       // console.log('data.totalResults=', data.totalResults);
@@ -141,7 +142,7 @@ export default class Model {
     // console.log("this.lastPage=", this.lastPage);
     // console.log("this.lastQuery=", this.lastQuery);
 
-    const searchResults = callApi(this.lastQuery, this.lastPage);
+    const searchResults = callApi(this.lastQuery.replace(/(^\s*)|(\s*)$/g, ''), this.lastPage);
     searchResults.then(data => {
       // console.log('this.lastQuery=', this.lastQuery);
       console.log('this.lastPage inside searchresults=', this.lastPage);
