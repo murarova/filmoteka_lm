@@ -115,10 +115,11 @@ export default class View extends EventEmitter {
       this.clearStarMaintPage();
       this.startPage();
       this.mainPage();
-      const state = {
-        page: e.target.getAttribute("href")
-      };
-      history.pushState(state, "", state.page);
+      // const state = {
+      //   page: e.target.getAttribute("href")
+      // };
+      history.pushState({}, "", "/");
+      // history.replaceState({}, "", "");
       e.preventDefault();
     });
 
@@ -133,9 +134,9 @@ export default class View extends EventEmitter {
     mainPage.classList.add("menu-link");
     myFilmoteka.classList.add("menu-link");
 
-    mainPage.setAttribute("href", "main-page");
+    mainPage.setAttribute("href", "/");
     myFilmoteka.setAttribute("href", "myFilmoteka");
-    logo.setAttribute("href", "#");
+    logo.setAttribute("href", "/");
 
     logoSpanFirst.textContent = "film";
     logoSpanSec.textContent = "teka";
