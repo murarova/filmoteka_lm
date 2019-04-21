@@ -144,8 +144,8 @@ export default class Model {
     const searchResults = callApi(this.lastQuery, this.lastPage);
     searchResults.then(data => {
       // console.log('this.lastQuery=', this.lastQuery);
-      console.log('this.lastPage inside searchresults=', this.lastPage);
-      console.log('data=', data);
+      // console.log('this.lastPage inside searchresults=', this.lastPage);
+      // console.log('data=', data);
       // console.log('data.totalResults=', data.totalResults);
       // console.log('data.Search=', data.Search);
       if (data.Response) {
