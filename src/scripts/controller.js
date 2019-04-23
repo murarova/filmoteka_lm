@@ -6,6 +6,9 @@ export default class Controller {
     view.on("onInputFilmName", this.handleSearch.bind(this));
     view.on("onFilmID", this.handleFilmID.bind(this));
     view.on("onPagination", this.handlePaginationEvent.bind(this));
+
+    view.on("onCreateFilPage", this.handleCreateFilmPage.bind(this));
+    view.on("onHandleList", this.handleList.bind(this));
   }
 
   handleSearch(query, page) {
@@ -30,10 +33,19 @@ export default class Controller {
   //handle Pagination
   handlePaginationEvent(btnName, currPage, numPages) {
     // console.log("this.model=", this.model);
-    this.model.resolvePages(btnName, currPage, numPages).then((resolve, reject) => {
-      return this.view.updateCardsList(this.model);
-    });
+    this.model
+      .resolvePages(btnName, currPage, numPages)
+      .then((resolve, reject) => {
+        return this.view.updateCardsList(this.model);
+      });
+  }
+  //handle film page
+  handleCreateFilmPage(id) {
+    console.log("this.model.takeFilmInfoFromLocalStorage(id)=", this.model.takeFilmInfoFromLocalStorage(id));
+    return this.model.takeFilmInfoFromLocalStorage(id);
+  }
+
+  handleList({ libraryListName, action }) {
+    this.model.handleListWithAction({ libraryListName, action });
   }
 }
-// console.log("this.model=", this.model);
-//         return this.view.createFilmPage(this.model);

@@ -352,120 +352,112 @@ export default class View extends EventEmitter {
       }
     }
   }
+  //add some attribute to btn
+  addAttribute(DOMElement, attribute) {
+    return DOMElement.setAttribute("library-list", attribute);
+  }
+  //take library list name and action type (add/delete) from btn
+  takeListNameAndAction(event) {
+    let libraryListName = event.target.getAttribute("library-list");
+    //add action
+    //console.log('event=', event);
+    let text = event.target.textContent;
+    //console.log('text =', text);
+    let action = null;
+    if (
+      text.includes("Отметить") ||
+      text.includes("Запланировать") ||
+      text.includes("Добавить")
+    ) {
+      action = "addToList";
+    }
+    if (
+      text.includes("Удалить") ||
+      text.includes("Отменить") ||
+      text.includes("Удалить")
+    ) {
+      action = "removeFromList";
+    }
+    let result = { libraryListName, action };
+    //console.log("result=", result);
 
+    return this.emit("onHandleList", result);
+  }
+  getDataAboutFilmFromLocalStorage(id) {
+    //console.log('id=', id);
+    this.emit("onCreateFilPage", id);
+  }
   createFilmPageButtons(id, root) {
+    let dataAboutFilmFromLocalStorage = this.getDataAboutFilmFromLocalStorage(
+      id
+    );
+    
     //viewLaterFilms
     const viewed = document.createElement("button");
+    //console.log('this.addAttribute=', this.addAttribute);
+    this.addAttribute(viewed, "viewLaterFilms");
+    //console.log("viewed=", viewed);
     viewed.classList.add("button");
+    //1 check for existing in some list and set a label
+    if (this.viewedCheck(id)) {
+      viewed.textContent = "Отметить как просмотренный";
+    } else {
+      viewed.textContent = "Удалить из просмотренных";
+    }
+    //2 take info about list and action
+    viewed.addEventListener("click", this.takeListNameAndAction.bind(this));
+    //3 change label after click
     viewed.addEventListener("click", e => {
-      this.viewedChange(id);
       if (this.viewedCheck(id)) {
         e.target.textContent = "Отметить как просмотренный";
       } else {
         e.target.textContent = "Удалить из просмотренных";
       }
     });
-    if (this.viewedCheck(id)) {
-      viewed.textContent = "Отметить как просмотренный";
-    } else {
-      viewed.textContent = "Удалить из просмотренных";
-    }
     root.append(viewed);
     //viewedFilms
     const planed = document.createElement("button");
     planed.classList.add("button");
+    this.addAttribute(planed, "viewedFilms");
+    //1 check for existing in some list and set a label
+    if (this.planedCheck(id)) {
+      planed.textContent = "Запланировать просмотр";
+    } else {
+      planed.textContent = "Отменить просмотр";
+    }
+    //2 take info about list and action
+    planed.addEventListener("click", this.takeListNameAndAction.bind(this));
+    //3 change label after click
     planed.addEventListener("click", e => {
-      this.planedChange(id);
       if (this.planedCheck(id)) {
         e.target.textContent = "Запланировать просмотр";
       } else {
         e.target.textContent = "Отменить просмотр";
       }
     });
-    if (this.planedCheck(id)) {
-      planed.textContent = "Запланировать просмотр";
-    } else {
-      planed.textContent = "Отменить просмотр";
-    }
+
     root.append(planed);
     //favoriteFilms
     const favourites = document.createElement("button");
     favourites.classList.add("button");
+    this.addAttribute(favourites, "favoriteFilms");
+    //1 check for existing in some list and set a label
+    if (this.favouritesCheck(id)) {
+      favourites.textContent = "Добавить в избранное";
+    } else {
+      favourites.textContent = "Удалить из избранного";
+    }
+    //2 take info about list and action
+    favourites.addEventListener("click", this.takeListNameAndAction.bind(this));
+    //3 change label after click
     favourites.addEventListener("click", e => {
-      this.favouritesChange(id);
       if (this.favouritesCheck(id)) {
         e.target.textContent = "Добавить в избранное";
       } else {
         e.target.textContent = "Удалить из избранного";
       }
     });
-    if (this.favouritesCheck(id)) {
-      favourites.textContent = "Добавить в избранное";
-    } else {
-      favourites.textContent = "Удалить из избранного";
-    }
-
     root.append(favourites);
-  }
-  //add to some list function
-
-  viewedChange(id) {
-    let data = JSON.parse(localStorage.getItem("filmoteka"));
-    if (!data.viewedFilms.includes(id)) {
-      data.viewedFilms.push(id);
-    } else {
-      data.viewedFilms = data.viewedFilms.filter(function(ele) {
-        return ele !== id;
-      });
-    }
-    localStorage.setItem("filmoteka", JSON.stringify(data));
-  }
-  planedChange(id) {
-    let data = JSON.parse(localStorage.getItem("filmoteka"));
-    if (!data.viewLaterFilms.includes(id)) {
-      data.viewLaterFilms.push(id);
-    } else {
-      data.viewLaterFilms = data.viewLaterFilms.filter(function(ele) {
-        return ele !== id;
-      });
-    }
-    localStorage.setItem("filmoteka", JSON.stringify(data));
-  }
-  favouritesChange(id) {
-    let data = JSON.parse(localStorage.getItem("filmoteka"));
-    if (!data.favoriteFilms.includes(id)) {
-      data.favoriteFilms.push(id);
-    } else {
-      data.favoriteFilms = data.favoriteFilms.filter(function(ele) {
-        return ele !== id;
-      });
-    }
-    localStorage.setItem("filmoteka", JSON.stringify(data));
-  }
-
-  viewedCheck(id) {
-    let data = JSON.parse(localStorage.getItem("filmoteka"));
-    if (!data.viewedFilms.includes(id)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  planedCheck(id) {
-    let data = JSON.parse(localStorage.getItem("filmoteka"));
-    if (!data.viewLaterFilms.includes(id)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  favouritesCheck(id) {
-    let data = JSON.parse(localStorage.getItem("filmoteka"));
-    if (!data.favoriteFilms.includes(id)) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   makeButton(text, root) {
