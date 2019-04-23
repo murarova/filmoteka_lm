@@ -9,6 +9,12 @@ export default class Controller {
 
     view.on("onCreateFilPage", this.handleCreateFilmPage.bind(this));
     view.on("onHandleList", this.handleList.bind(this));
+
+    //my filmoteka listeners
+
+    view.on('onViewLaterFilmsBtn', this.handleViewLaterFilms.bind(this));
+    view.on('onFavotitesBtn', this.handleFavorites.bind(this));
+    view.on('onViewedFilmsBtn', this.handleViewedFilms.bind(this));
   }
 
   handleSearch(query, page) {
@@ -47,5 +53,23 @@ export default class Controller {
 
   handleList({ libraryListName, action }) {
     this.model.handleListWithAction({ libraryListName, action });
+  }
+
+  handleViewLaterFilms() {
+    this.model.viewLaterFilms.length === 0 
+    ? console.log('sorry arr is empty')
+    : this.view.clearCardsList(), this.view.cardsRender(this.model.viewLaterFilms);
+  }
+
+  handleFavorites() {
+    this.model.favoriteFilms.length === 0 
+    ? console.log('sorry arr is empty')
+    : this.view.clearCardsList(), this.view.cardsRender(this.model.favoriteFilms);
+  }
+
+  handleViewedFilms() {
+    this.model.viewedFilms.length === 0 
+    ? console.log('sorry arr is empty')
+    : this.view.clearCardsList(), this.view.cardsRender(this.model.viewedFilms);
   }
 }
