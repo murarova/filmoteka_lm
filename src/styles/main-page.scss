@@ -54,7 +54,7 @@ img {
 .title {
     margin: 0;
     text-align: center;
-    padding: 80px 0 30px;
+    padding: 15% 0 30px;
     font-size: 35px;
 }
 
@@ -69,6 +69,18 @@ img {
     display: flex;
     flex-wrap: wrap;
     padding-bottom: 90px;
+}
+
+.controls{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.controls{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .item {
