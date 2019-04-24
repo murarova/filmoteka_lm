@@ -1,0 +1,31 @@
+.filmoteka-buttons {
+    margin: 60px 0 30px;
+    border-bottom: 2px solid #000;
+    display: flex;
+    justify-content: center;
+}
+
+.filmoteka-buttons .button {
+    width: 20%;
+    margin-right: 0;
+    padding: 10px;
+    border: 2px solid black;
+    border-bottom: 0px;
+    outline: none;
+}
+
+.filmoteka-buttons .button:focus {
+    color: #000;
+    background: #fff;
+}
+.filmoteka-buttons .button[autofocus] {
+    color: #000;
+    background: #fff;
+}
+
+.message {
+    margin: 80px auto;
+    color: lightgray;
+    font-size: 40px;
+    font-weight: bold;
+}
