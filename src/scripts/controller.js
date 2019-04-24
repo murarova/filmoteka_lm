@@ -9,7 +9,8 @@ export default class Controller {
 
     view.on("onCreateFilmPage", this.handleCreateFilmPage.bind(this));
     view.on("onHandleList", this.handleList.bind(this));
-
+    
+    view.on("onBackToSearchResults", this.handleBackToSearchResults.bind(this));
     //myFilmoteka listeners
 
     view.on('onViewLaterFilmsBtn', this.handleViewLaterFilms.bind(this));
@@ -17,8 +18,13 @@ export default class Controller {
     view.on('onViewedFilmsBtn', this.handleViewedFilms.bind(this));
   }
 
+  handleBackToSearchResults(){
+    return this.view.updateCardsList(this.model);
+  }
+
   handleSearch(query, page) {
     this.model.handleSearchQuery(query, page).then(() => {
+      //console.log('this.model=', this.model);
       return this.view.updateCardsList(this.model);
     });
   }
