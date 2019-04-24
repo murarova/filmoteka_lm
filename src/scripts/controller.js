@@ -7,7 +7,7 @@ export default class Controller {
     view.on("onFilmID", this.handleFilmID.bind(this));
     view.on("onPagination", this.handlePaginationEvent.bind(this));
 
-    view.on("onCreateFilPage", this.handleCreateFilmPage.bind(this));
+    view.on("onCreateFilmPage", this.handleCreateFilmPage.bind(this));
     view.on("onHandleList", this.handleList.bind(this));
 
     //myFilmoteka listeners
@@ -47,8 +47,9 @@ export default class Controller {
   }
   //handle film page
   handleCreateFilmPage(id) {
-    console.log("this.model.takeFilmInfoFromLocalStorage(id)=", this.model.takeFilmInfoFromLocalStorage(id));
-    return this.model.takeFilmInfoFromLocalStorage(id);
+    let result = this.model.takeFilmInfoFromLocalStorage(id);
+    //console.log("result =", result);
+    return this.view.dataAboutFilmFromLocalStorage = result;
   }
 
   handleList({ libraryListName, action }) {
