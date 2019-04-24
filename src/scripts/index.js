@@ -35,7 +35,8 @@ function checkRedirect(hrefShare) {
 
       if(redirectPage === "library"){
         view.clearStartMainPage();
-        view.makeFilmotekaPage(); // сюда нужно вставить функцию которая будет отображать библиотеку
+        view.makeFilmotekaPage();
+        view.emit('onViewLaterFilmsBtn');
         history.replaceState({}, "", 'library.html');
       }
     }
