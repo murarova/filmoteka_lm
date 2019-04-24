@@ -510,9 +510,94 @@ export default class View extends EventEmitter {
     }
 
     //render search results
-    updateCardsList(arr) {
-        this.clearCardsList();
-        this.cardsRender(arr);
+    updateCardsList(model) {
+      // console.log('model in view', model);
+      // console.log("model.queryFilmList=", model.queryFilmList);
+      // console.log('lastQueryTotal=', lastQueryTotal);
+      // console.log('model.queryFilmList=', model.queryFilmList);
+      // const cardList = this.cardList(container);
+      // console.log("model.queryFilmList=", model.queryFilmList);
+  
+      const cardList = document.querySelector(".card-list");
+  
+      // cardList.addEventListener('click', this.openFilmPage.bind(this));
+  
+      this.clearCardsList();
+      // model.queryFilmList;
+      // console.log("model.queryFilmList=", model.queryFilmList);
+      let items = [];
+      model.queryFilmList.forEach(item => {
+        // console.log("item=", item);
+        let newCard = this.makeCard(item);
+        // console.log("newCard=", newCard);
+        items.push(newCard);
+        cardList.append(newCard);
+      });
+  
+      // Работа с страницами поиска
+  
+      // console.log("items=", items);
+      // console.log('items num = ', localStorage.getItem('num'));
+      // console.log('num pages = ', Math.ceil(localStorage.getItem('num') / 10))
+      // if (localStorage.getItem('numPages') > 1) {
+      // this.makeButton('Prev', cardList);
+  
+      const currPage = model.lastPage;
+      const numPages = Math.ceil(model.lastQueryTotal / 10);
+  
+      // console.log("currPage=", currPage);
+      // console.log("model.lastQueryTotal=", model.lastQueryTotal);
+      // console.log("numPages=", numPages);
+  
+      // const prev = document.createElement("button");
+      // prev.classList.add("button");
+      // prev.textContent = "Prev";
+      // prev.disabled = true;
+      // cardList.append(prev);
+  
+      // const button = document.createElement("button");
+      // button.classList.add("button");
+      // button.textContent =
+      //   localStorage.getItem("currPage") +
+      //   " / " +
+      //   localStorage.getItem("numPages");
+      // cardList.append(button);
+  
+      // const next = document.createElement("button");
+      // next.classList.add("button");
+      // next.textContent = "Next";
+      // cardList.append(next);
+  
+      const controls = document.createElement("div");
+      controls.classList.add("controls");
+  
+      const prev = this.createPaginationButton("Prev", currPage, numPages);
+      controls.append(prev);
+      const pages = this.createPaginationButton("Pages", currPage, numPages);
+      controls.append(pages);
+      const next = this.createPaginationButton("Next", currPage, numPages);
+      controls.append(next);
+      cardList.append(controls);
+      // this.makeButton('Prev', cardList);
+  
+      // this.makeButton('Next', cardList);
+  
+      // cardList.append(items);
+      // console.log("items=", items);
+  
+      //added pagination handler
+      // console.log("prev=", prev);
+      // console.log("button=", pages);
+      // console.log("next=", next);
+  
+      // next.addEventListener(
+      //   "click",
+      //   this.handlePagination("next", currPage, numPages).bind(this)
+      // );
+      // prev.addEventListener(
+      //   "click",
+      //   this.handlePagination("prev", currPage, numPages).bind(this)
+      // );
     }
 
     handlePagination(event) {
@@ -564,7 +649,19 @@ export default class View extends EventEmitter {
         container.innerHTML = '';
     }
 
+    makeButton1(text, root) {
+      const button = document.createElement("button");
+      button.classList.add("button");
+      // for my filmoteka
+      button.classList.add("btn-filmoteka");
+      //button.classList.add("activ-btn");
+      button.textContent = text;
+      button.addEventListener("click", this.switchBtn.bind(this));
+      root.append(button);
+    }
+
     makeFilmotekaPage() {
+
         const container = document.querySelector('.container');
         container.innerHTML = '';
 
@@ -580,6 +677,8 @@ export default class View extends EventEmitter {
 
         const firstBtn = buttons.querySelector('button');
         firstBtn.autofocus = true;
+ 
+       
     }
 
     deleteAutofocus() {
@@ -598,6 +697,7 @@ export default class View extends EventEmitter {
     }
 
     cardsRender(arr) {
+        //console.log("arr=", arr);
         arr.forEach(element => {
             this.makeCard(element);
         });

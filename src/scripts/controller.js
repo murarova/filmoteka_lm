@@ -19,7 +19,7 @@ export default class Controller {
 
   handleSearch(query, page) {
     this.model.handleSearchQuery(query, page).then(() => {
-      return this.view.updateCardsList(this.model.queryFilmList);
+      return this.view.updateCardsList(this.model);
     });
   }
 
