@@ -60,6 +60,22 @@ export default class View extends EventEmitter {
       "input",
       debounce(this.onInput.bind(this), 300)
     );
+    //film page
+    this.dataAboutFilmFromLocalStorage = null;
+    this.filmPageBtnText = {
+      viewedFilms: {
+        add: "Отметить как просмотренный",
+        remove: "Удалить из просмотренных"
+      },
+      viewLaterFilms: {
+        add: "Запланировать просмотр",
+        remove: "Отменить просмотр"
+      },
+      favoriteFilms: {
+        add: "Добавить в избранное",
+        remove: "Удалить из избранного"
+      }
+    };
   }
 
   startPage() {
@@ -235,11 +251,11 @@ export default class View extends EventEmitter {
       e.preventDefault();
       const idTarget = e.target.closest("a");
       const idT = idTarget.getAttribute("id");
-      console.log(idT);
+      //console.log(idT);
       const state = {
         page: idTarget.getAttribute("id")
       };
-      console.log(state.page);
+      //console.log(state.page);
       history.pushState(state, "", "movie.html?imdbID=" + state.page);
       window.addEventListener("popstate", e => {
         e.preventDefault();
@@ -356,85 +372,90 @@ export default class View extends EventEmitter {
   addAttribute(DOMElement, attribute) {
     return DOMElement.setAttribute("library-list", attribute);
   }
+  addActionAtrribute(DOMElement, action) {
+    return DOMElement.setAttribute("action", action);
+  }
   //take library list name and action type (add/delete) from btn
   takeListNameAndAction(event) {
     let libraryListName = event.target.getAttribute("library-list");
     //add action
     //console.log('event=', event);
-    let text = event.target.textContent;
-    //console.log('text =', text);
-    let action = null;
-    if (
-      text.includes("Отметить") ||
-      text.includes("Запланировать") ||
-      text.includes("Добавить")
-    ) {
-      action = "addToList";
-    }
-    if (
-      text.includes("Удалить") ||
-      text.includes("Отменить") ||
-      text.includes("Удалить")
-    ) {
-      action = "removeFromList";
-    }
+    let action = event.target.getAttribute("action");
+
     let result = { libraryListName, action };
     //console.log("result=", result);
 
     return this.emit("onHandleList", result);
   }
+  //
   getDataAboutFilmFromLocalStorage(id) {
     //console.log('id=', id);
-    this.emit("onCreateFilPage", id);
+    this.emit("onCreateFilmPage", id);
   }
+
+  changeActionAndLabel(event) {
+    if (event.target.nodeName !== "BUTTON") return;
+    console.log("inside changeActionAndLabel");
+    let action = event.target.getAttribute("action");
+    let list = event.target.getAttribute("library-list");
+    console.log("action =", action);
+    console.log("list =", list);
+    console.log("action === add", action === "add");
+    console.log("action === add", action === "add");
+    let label = "";
+    if (action === "add") {
+      action = "remove";
+      label = this.filmPageBtnText[list].remove;
+    } else {
+      action = "add";
+      label = this.filmPageBtnText[list].add;
+    }
+    this.addActionAtrribute(event.target, action);
+    event.target.textContent = label;
+  }
+
   createFilmPageButtons(id, root) {
-    let dataAboutFilmFromLocalStorage = this.getDataAboutFilmFromLocalStorage(
-      id
-    );
-    
-    //viewLaterFilms
+    this.getDataAboutFilmFromLocalStorage(id);
+    // console.log(
+    //   "this.dataAboutFilmFromLocalStorage=",
+    //   this.dataAboutFilmFromLocalStorage
+    // );
+
+    //viewedFilms
     const viewed = document.createElement("button");
     //console.log('this.addAttribute=', this.addAttribute);
-    this.addAttribute(viewed, "viewLaterFilms");
+    this.addAttribute(viewed, "viewedFilms");
     //console.log("viewed=", viewed);
     viewed.classList.add("button");
-    //1 check for existing in some list and set a label
-    if (this.viewedCheck(id)) {
-      viewed.textContent = "Отметить как просмотренный";
+    //1 check for existing in some list and set a label and action attribute
+    if (!this.dataAboutFilmFromLocalStorage.viewedFilms) {
+      this.addActionAtrribute(viewed, "add");
+      viewed.textContent = this.filmPageBtnText.viewedFilms.add;
     } else {
-      viewed.textContent = "Удалить из просмотренных";
+      this.addActionAtrribute(viewed, "remove");
+      viewed.textContent = this.filmPageBtnText.viewedFilms.remove;
     }
     //2 take info about list and action
     viewed.addEventListener("click", this.takeListNameAndAction.bind(this));
     //3 change label after click
-    viewed.addEventListener("click", e => {
-      if (this.viewedCheck(id)) {
-        e.target.textContent = "Отметить как просмотренный";
-      } else {
-        e.target.textContent = "Удалить из просмотренных";
-      }
-    });
+    viewed.addEventListener("click", this.changeActionAndLabel.bind(this));
     root.append(viewed);
-    //viewedFilms
+    //viewLaterFilms
     const planed = document.createElement("button");
     planed.classList.add("button");
-    this.addAttribute(planed, "viewedFilms");
+    this.addAttribute(planed, "viewLaterFilms");
     //1 check for existing in some list and set a label
-    if (this.planedCheck(id)) {
-      planed.textContent = "Запланировать просмотр";
+    if (!this.dataAboutFilmFromLocalStorage.viewLaterFilms) {
+      this.addActionAtrribute(planed, "add");
+      planed.textContent = this.filmPageBtnText.viewLaterFilms.add;
     } else {
-      planed.textContent = "Отменить просмотр";
+      this.addActionAtrribute(planed, "remove");
+      planed.textContent = this.filmPageBtnText.viewLaterFilms.remove;
     }
     //2 take info about list and action
     planed.addEventListener("click", this.takeListNameAndAction.bind(this));
     //3 change label after click
-    planed.addEventListener("click", e => {
-      if (this.planedCheck(id)) {
-        e.target.textContent = "Запланировать просмотр";
-      } else {
-        e.target.textContent = "Отменить просмотр";
-      }
-    });
+    planed.addEventListener("click", this.changeActionAndLabel.bind(this));
 
     root.append(planed);
     //favoriteFilms
@@ -442,21 +463,17 @@ export default class View extends EventEmitter {
     favourites.classList.add("button");
     this.addAttribute(favourites, "favoriteFilms");
     //1 check for existing in some list and set a label
-    if (this.favouritesCheck(id)) {
-      favourites.textContent = "Добавить в избранное";
+    if (!this.dataAboutFilmFromLocalStorage.favoriteFilms) {
+      this.addActionAtrribute(favourites, "add");
+      favourites.textContent = this.filmPageBtnText.favoriteFilms.add;
     } else {
-      favourites.textContent = "Удалить из избранного";
+      this.addActionAtrribute(favourites, "remove");
+      favourites.textContent = this.filmPageBtnText.favoriteFilms.remove;
     }
     //2 take info about list and action
     favourites.addEventListener("click", this.takeListNameAndAction.bind(this));
     //3 change label after click
-    favourites.addEventListener("click", e => {
-      if (this.favouritesCheck(id)) {
-        e.target.textContent = "Добавить в избранное";
-      } else {
-        e.target.textContent = "Удалить из избранного";
-      }
-    });
+    favourites.addEventListener("click", this.changeActionAndLabel.bind(this));
     root.append(favourites);
   }
 
