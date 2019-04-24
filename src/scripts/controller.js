@@ -10,7 +10,7 @@ export default class Controller {
     view.on("onCreateFilPage", this.handleCreateFilmPage.bind(this));
     view.on("onHandleList", this.handleList.bind(this));
 
-    //my filmoteka listeners
+    //myFilmoteka listeners
 
     view.on('onViewLaterFilmsBtn', this.handleViewLaterFilms.bind(this));
     view.on('onFavotitesBtn', this.handleFavorites.bind(this));
@@ -19,7 +19,7 @@ export default class Controller {
 
   handleSearch(query, page) {
     this.model.handleSearchQuery(query, page).then(() => {
-      return this.view.updateCardsList(this.model);
+      return this.view.updateCardsList(this.model.queryFilmList);
     });
   }
 
@@ -55,21 +55,43 @@ export default class Controller {
     this.model.handleListWithAction({ libraryListName, action });
   }
 
+  //myFilmoteka listeners
+
   handleViewLaterFilms() {
-    this.model.viewLaterFilms.length === 0 
-    ? console.log('sorry arr is empty')
-    : this.view.clearCardsList(), this.view.cardsRender(this.model.viewLaterFilms);
+
+    if(this.model.viewLaterFilms.length === 0) {
+      this.view.clearCardsList(); 
+      this.view.ifNothingToRender();
+    } else {
+      this.view.clearCardsList();
+      this.view.cardsRender(this.model.viewLaterFilms);
+    } 
   }
 
   handleFavorites() {
-    this.model.favoriteFilms.length === 0 
-    ? console.log('sorry arr is empty')
-    : this.view.clearCardsList(), this.view.cardsRender(this.model.favoriteFilms);
+
+    if(this.model.favoriteFilms.length === 0) {
+      this.view.clearCardsList();
+      this.view.deleteAutofocus();
+      this.view.ifNothingToRender();
+    } else {
+      this.view.clearCardsList();
+      this.view.deleteAutofocus();
+      this.view.cardsRender(this.model.favoriteFilms);
+    }
   }
 
   handleViewedFilms() {
-    this.model.viewedFilms.length === 0 
-    ? console.log('sorry arr is empty')
-    : this.view.clearCardsList(), this.view.cardsRender(this.model.viewedFilms);
+
+    if(this.model.viewedFilms.length === 0) {
+      this.view.clearCardsList();
+      this.view.deleteAutofocus();
+      this.view.ifNothingToRender();
+    } else {
+      this.view.clearCardsList();
+      this.view.deleteAutofocus();
+      this.view.cardsRender(this.model.viewedFilms);
+    }
   }
+
 }
