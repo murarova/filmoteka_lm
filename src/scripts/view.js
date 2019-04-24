@@ -141,7 +141,7 @@ export default class View extends EventEmitter {
 
         mainPage.addEventListener("click", e => {
           if (e.target.tagName !== "A") return;
-          this.t();
+          this.clearStarMaintPage();
           this.startPage();
           this.mainPage();
           // const state = {
@@ -424,6 +424,7 @@ export default class View extends EventEmitter {
     //2 take info about list and action
     viewed.addEventListener("click", this.takeListNameAndAction.bind(this));
     //3 change label after click
+    console.log('this=', this);
     viewed.addEventListener("click", this.changeActionAndLabel.bind(this));
     root.append(viewed);
     //viewLaterFilms
@@ -598,7 +599,7 @@ export default class View extends EventEmitter {
     //show film page
     createFilmPage(data, id) {
         // console.log('data in view=', data);
-        this.t();
+        this.clearStarMaintPage();
         this.startPage();
         this.makeCardPage(data, id);
     }
