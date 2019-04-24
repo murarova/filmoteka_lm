@@ -9,11 +9,17 @@ export default class Controller {
 
     view.on("onCreateFilPage", this.handleCreateFilmPage.bind(this));
     view.on("onHandleList", this.handleList.bind(this));
+
+    //myFilmoteka listeners
+
+    view.on('onViewLaterFilmsBtn', this.handleViewLaterFilms.bind(this));
+    view.on('onFavotitesBtn', this.handleFavorites.bind(this));
+    view.on('onViewedFilmsBtn', this.handleViewedFilms.bind(this));
   }
 
   handleSearch(query, page) {
     this.model.handleSearchQuery(query, page).then(() => {
-      return this.view.updateCardsList(this.model);
+      return this.view.updateCardsList(this.model.queryFilmList);
     });
   }
 
@@ -48,4 +54,44 @@ export default class Controller {
   handleList({ libraryListName, action }) {
     this.model.handleListWithAction({ libraryListName, action });
   }
+
+  //myFilmoteka listeners
+
+  handleViewLaterFilms() {
+
+    if(this.model.viewLaterFilms.length === 0) {
+      this.view.clearCardsList(); 
+      this.view.ifNothingToRender();
+    } else {
+      this.view.clearCardsList();
+      this.view.cardsRender(this.model.viewLaterFilms);
+    } 
+  }
+
+  handleFavorites() {
+
+    if(this.model.favoriteFilms.length === 0) {
+      this.view.clearCardsList();
+      this.view.deleteAutofocus();
+      this.view.ifNothingToRender();
+    } else {
+      this.view.clearCardsList();
+      this.view.deleteAutofocus();
+      this.view.cardsRender(this.model.favoriteFilms);
+    }
+  }
+
+  handleViewedFilms() {
+
+    if(this.model.viewedFilms.length === 0) {
+      this.view.clearCardsList();
+      this.view.deleteAutofocus();
+      this.view.ifNothingToRender();
+    } else {
+      this.view.clearCardsList();
+      this.view.deleteAutofocus();
+      this.view.cardsRender(this.model.viewedFilms);
+    }
+  }
+
 }

@@ -11,6 +11,7 @@ const model = new Model();
 new Controller(model, view);
 
 const hrefShare = window.location.search;
+
 function checkRedirect(hrefShare) {
   if (hrefShare.length) {
     const isRedirect = hrefShare
@@ -30,6 +31,12 @@ function checkRedirect(hrefShare) {
         // console.log(renderById);
         view.emit("onFilmID", renderById);
         history.replaceState({}, "", "/movie.html?imdbID=" + renderById);
+      }
+
+      if(redirectPage === "library"){
+        view.clearStartMainPage();
+        view.makeFilmotekaPage(); // сюда нужно вставить функцию которая будет отображать библиотеку
+        history.replaceState({}, "", 'library.html');
       }
     }
   }

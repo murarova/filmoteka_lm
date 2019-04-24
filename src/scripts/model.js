@@ -2,21 +2,22 @@ import callApi from "./services/callApi";
 import callApiFull from "./services/callApiFull";
 // import { resolve } from "dns";
 
+
 export default class Model {
   constructor() {
     //fields with films
-    (this.queryFilmList = []), //last 10 film showed after search querry
+      (this.queryFilmList = []), //last 10 film showed after search querry
       (this.viewLaterFilms = []),
       (this.viewedFilms = []),
       (this.favoriteFilms = []);
     //last page and total for pagination
-    (this.lastPage = 1),
+      (this.lastPage = 1),
       //total results in last query
       (this.lastQueryTotal = 1),
       //last viewed film in detailed form
       (this.lastFilm = {});
     //last query for search
-    this.lastQuery = "";
+      this.lastQuery = "";
 
     //object for writtting/reading to storage
     this.filmoteka = {
