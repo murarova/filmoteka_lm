@@ -67,7 +67,7 @@ export default class Model {
           this.filmoteka = filmotekaFromLocalStorage;
           // console.log('this.filmoteka=', this.filmoteka);
         };
-        return filmotekaFromLocalStorage;
+        return;
       } catch (error) {
         console.log("Local Storage is empty");
         return;
@@ -76,18 +76,22 @@ export default class Model {
   }
 
   getFavoriteFilmsFromLS() {
-    const localStoradgeObj = this.localStorageRead();
-    return localStoradgeObj.favoriteFilms;
+    this.localStorageRead();
+    //const localStoradgeObj = this.localStorageRead();
+    return this.filmoteka.favoriteFilms;
   }
 
   getViewedFilmsFromLS() {
-    const localStoradgeObj = this.localStorageRead();
-    return localStoradgeObj.viewedFilms;
+    this.localStorageRead();
+    //const localStoradgeObj = this.localStorageRead();
+    return this.filmoteka.viewedFilms;
   }
 
   getViewLaterFilmsFromLS() {
-    const localStoradgeObj = this.localStorageRead();
-    return localStoradgeObj.viewLaterFilms;
+    this.localStorageRead();
+    // console.log('this =', this);
+    // console.log('localStoradgeObj =', localStoradgeObj);
+    return this.filmoteka.viewLaterFilms;
   }
 
   //add film to list

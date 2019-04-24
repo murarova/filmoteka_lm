@@ -582,6 +582,8 @@ export default class View extends EventEmitter {
     controls.append(pages);
     const next = this.createPaginationButton("Next", currPage, numPages);
     controls.append(next);
+    //console.log('model=', model);
+    if (model.queryFilmList.length === 0) return;
     cardList.append(controls);
   }
 
@@ -631,15 +633,25 @@ export default class View extends EventEmitter {
     container.innerHTML = "";
   }
 
-  makeButton1(text, root) {
+  makeLibraryButton(text, root) {
+    //console.log("this=", this);
     const button = document.createElement("button");
     button.classList.add("button");
     // for my filmoteka
     button.classList.add("btn-filmoteka");
     //button.classList.add("activ-btn");
     button.textContent = text;
-    button.addEventListener("click", this.switchBtn.bind(this));
+    button.addEventListener("click", this.switchBtn);
     root.append(button);
+  }
+  //switch marked buttons
+  switchBtn(event) {
+    //console.log('event', event);
+    if (event.target.nodeName !== "BUTTON") return;
+    const parentNode = event.target.parentNode;
+    //console.log('parentNode=', parentNode);
+    parentNode.childNodes.forEach(node => node.classList.remove("activ-btn"));
+    event.target.classList.add("activ-btn");
   }
 
   makeFilmotekaPage() {
@@ -649,15 +661,18 @@ export default class View extends EventEmitter {
     const buttons = document.createElement("div");
     buttons.classList.add("filmoteka-buttons");
 
-    this.makeButton("Очередь просмотра", buttons);
-    this.makeButton("Избранные", buttons);
-    this.makeButton("Просмотренные", buttons);
+    this.makeLibraryButton("Очередь просмотра", buttons);
+    this.makeLibraryButton("Избранные", buttons);
+    this.makeLibraryButton("Просмотренные", buttons);
 
     container.append(buttons);
     this.cardList(container);
 
     const firstBtn = buttons.querySelector("button");
-    firstBtn.autofocus = true;
+    firstBtn.classList.add("activ-btn");
+    //console.log('model=', model);
+    //console.log("this=", this);
+    //firstBtn.autofocus = true;
   }
 
   deleteAutofocus() {
