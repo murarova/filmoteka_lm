@@ -19,7 +19,13 @@ export default class Controller {
   }
 
   handleBackToSearchResults(){
-    return this.view.updateCardsList(this.model);
+    //start add last querry in the input after back
+    
+    this.view.updateCardsList(this.model);
+
+    let input = document.querySelector('.input');
+    input.value=this.model.lastQuery;
+    //end add last querry in the input after back
   }
 
   handleSearch(query, page) {
