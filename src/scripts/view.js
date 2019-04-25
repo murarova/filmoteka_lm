@@ -396,8 +396,30 @@ export default class View extends EventEmitter {
         const infoKey = document.createElement("li");
         const keyValue = document.createElement("span");
 
+        //start changing rating votes
+        //console.log('shownProp=', shownProp);
+        //console.log('prop=', prop);
+        //console.log(`Prop ${prop} =`, prop);
+        //console.log(`shownProp[prop] =`, shownProp[prop]);
+        let textContent = shownProp[prop];
+        if (prop === "Rating") {
+          //console.log("Rating!");
+          let ratingValue = shownProp[prop];
+          //console.log(`ratingValue =`, ratingValue);
+          if (!ratingValue) continue;
+          //check for first bracket
+          let firstBracketPosition = ratingValue.indexOf("(");
+          //console.log(`firstBracketPosition =`, firstBracketPosition);
+          //cut rating value from first bracket to the end
+          let newRatingValue = ratingValue.slice(0, firstBracketPosition - 1);
+          //console.log(`newRatingValue =`, newRatingValue);
+          textContent = newRatingValue;
+        }
         infoKey.textContent = `${prop}: `;
-        keyValue.textContent = shownProp[prop];
+        //keyValue.textContent = shownProp[prop];
+        keyValue.textContent = textContent;
+
+        //end changing rating votes
 
         infoKey.classList.add("info-key");
         keyValue.classList.add("key-value");
