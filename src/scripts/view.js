@@ -114,6 +114,7 @@ export default class View extends EventEmitter {
 
   header(root) {
     const header = document.createElement("header");
+    const headerCont = document.createElement('div');
     const logo = document.createElement("a");
     const logoSpanFirst = document.createElement("span");
     const i = document.createElement("i");
@@ -192,6 +193,7 @@ export default class View extends EventEmitter {
     // end routing
 
     header.classList.add("header");
+    headerCont.classList.add('header-container');
     logo.classList.add("logo");
     i.classList.add("logo-icon");
     menu.classList.add("menu");
@@ -210,11 +212,12 @@ export default class View extends EventEmitter {
     myFilmoteka.textContent = "Моя фильмотека";
 
     root.append(header);
-    header.append(logo);
+    header.append(headerCont);
+    headerCont.append(logo);
     logo.append(logoSpanFirst);
     logo.append(i);
     logo.append(logoSpanSec);
-    header.append(menu);
+    headerCont.append(menu);
     menu.append(menuItemOne);
     menuItemOne.append(mainPage);
     menu.append(menuItemTwo);
