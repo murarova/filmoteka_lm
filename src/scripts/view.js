@@ -285,17 +285,20 @@ export default class View extends EventEmitter {
     link.classList.add("card-link");
 
     link.addEventListener("click", this.getFilmID.bind(this));
-    link.setAttribute("id", card.imdbID);
+    //start changing film card attribute
+    //link.setAttribute("id", card.imdbID);
+    //link.setAttribute("href", card.imdbID);
 
     // start routing for card==============================================
 
     link.addEventListener("click", e => {
       e.preventDefault();
       const idTarget = e.target.closest("a");
-      const idT = idTarget.getAttribute("id");
+      //const idT = idTarget.getAttribute("id");
+      const idT = idTarget.getAttribute("href");
       // console.log(idT);
       const state = {
-        page: idTarget.getAttribute("id")
+        page: idT
       };
       // console.log(state.page);
       history.pushState(state, "", "movie.html?imdbID=" + state.page);
@@ -319,7 +322,7 @@ export default class View extends EventEmitter {
     card.Poster === "N/A" ? (imgSrc = noavailable) : (imgSrc = card.Poster);
 
     img.setAttribute("src", imgSrc);
-    link.setAttribute("href", "");
+    link.setAttribute("href", card.imdbID);
 
     title.textContent = card.Title;
 
@@ -726,7 +729,8 @@ export default class View extends EventEmitter {
     // console.log("parenDiv=", parenDiv);
     let target = event.target.closest("a");
     // console.log("target=", target);
-    let id = target.getAttribute("id");
+    //let id = target.getAttribute("id");
+    let id = target.getAttribute("href");
     return this.emit("onFilmID", id);
     // console.log("id=", id);
   }
