@@ -23,11 +23,32 @@
 .info-key { 
     font-weight: bold;
     padding-bottom: 5px;
+    position: relative;
 }
 
 .key-value {
     font-weight: normal;
     font-size: 14px;
+}
+
+.info-key:nth-child(2) .key-value {
+    font-weight: bold;
+    font-size: 1.1em;
+    background: lightgray;
+    display: inline-block;
+    width: 65px;
+    height: 23px;
+    text-align: center;
+    vertical-align: center;
+    border-radius: 5px/5px;
+}
+
+.votes {
+    color:grey;
+    font-size: 0.8em;
+    position: absolute;
+    top: -15px;
+    left: 130px;
 }
 
 .image-wrapper {
@@ -94,4 +115,8 @@
 
 .notactiveBtn {
     cursor: default;
+}
+
+.info-key:nth-child(2) {
+    padding: 0;
 }
