@@ -589,10 +589,11 @@ export default class View extends EventEmitter {
         // console.log("model.queryFilmList=", model.queryFilmList);
 
         const cardList = document.querySelector(".card-list");
-
+        const titleToTop = document.querySelector('.title');
         // cardList.addEventListener('click', this.openFilmPage.bind(this));
 
         this.clearCardsList();
+        titleToTop.classList.add('title-padding');
         // model.queryFilmList;
         //console.log("arrayOfFilms=", arrayOfFilms);
         let items = [];
