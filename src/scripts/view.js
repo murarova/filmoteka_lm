@@ -329,12 +329,16 @@ export default class View extends EventEmitter {
         img.setAttribute("src", imgSrc);
         link.setAttribute("href", card.imdbID);
 
-        title.textContent = card.Title;
-        rating.textContent = card.Rating;
+        title.textContent = `${card.Title}   `;
+        rating.textContent = card.imdbRating;
 
         item.append(link);
         link.append(title);
-        title.append(rating);
+
+        if(rating.textContent != '') {
+            title.append(rating);
+        }
+
         link.append(img);
         cardList.append(item);
 
