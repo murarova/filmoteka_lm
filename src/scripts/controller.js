@@ -1,7 +1,10 @@
 export default class Controller {
-  constructor(model, view) {
+
+  constructor(model, view, routing) {
+
     this.model = model;
     this.view = view;
+    this.routing = routing;
 
     view.on("onInputFilmName", this.handleSearch.bind(this));
     view.on("onFilmID", this.handleFilmID.bind(this));
@@ -9,22 +12,71 @@ export default class Controller {
 
     view.on("onCreateFilmPage", this.handleCreateFilmPage.bind(this));
     view.on("onHandleList", this.handleList.bind(this));
-    
+
     view.on("onBackToSearchResults", this.handleBackToSearchResults.bind(this));
     //myFilmoteka listeners
 
     view.on('onViewLaterFilmsBtn', this.handleViewLaterFilms.bind(this));
     view.on('onFavotitesBtn', this.handleFavorites.bind(this));
     view.on('onViewedFilmsBtn', this.handleViewedFilms.bind(this));
+
+    view.on('onFilmotekaLink', this.handleFilmotekaLink.bind(this));
+    view.on('onCardLink', this.handleCardLink.bind(this));
+    view.on('onMainLink', this.handleMainLink.bind(this));
+    view.on('onLogoLink', this.handleLogoLink.bind(this));
+    view.on('onPopState', this.handlePopState.bind(this));
+
+    routing.on("onBackToMainPage", this.handleBackToMainPage.bind(this));
+    routing.on("onBackToLibrary", this.handleBackToLibrary.bind(this));
+    routing.on("onFilmID", this.handleFilmID.bind(this));
   }
 
-  handleBackToSearchResults(){
+  handleCardLink(e) {
+    e.preventDefault();
+    this.routing.pushCardState(e);
+  }
+
+  handleBackToLibrary() {
+    this.view.makeFilmotekaPage();
+    this.handleViewLaterFilms();
+  }
+
+  handleMainLink(e) {
+    e.preventDefault();
+    this.routing.pushState(e);
+    this.view.clearStarMaintPage();
+    this.view.startPage();
+    this.view.mainPage();
+  }
+
+  handleLogoLink(e) {
+    e.preventDefault();
+    this.routing.logoPushState(e);
+    this.view.clearStarMaintPage();
+    this.view.startPage();
+    this.view.mainPage();
+  }
+
+  handleBackToMainPage() {
+
+    this.view.clearStarMaintPage();
+    this.view.startPage();
+    this.view.mainPage();
+
+    if (this.model.lastQuery.length !== 0) {
+      this.view.updateCardsList(this.model);
+      let input = document.querySelector('.input');
+      input.value = this.model.lastQuery;
+    }
+  }
+
+  handleBackToSearchResults() {
     //start add last querry in the input after back
-    
+
     this.view.updateCardsList(this.model);
 
     let input = document.querySelector('.input');
-    input.value=this.model.lastQuery;
+    input.value = this.model.lastQuery;
     //end add last querry in the input after back
   }
 
@@ -42,10 +94,11 @@ export default class Controller {
   }
 
   handleFilmID(id) {
-    this.model.takeFilmInfo(id).then(data => {
-      this.view.createFilmPage(data, id); //this.view.createFilmPageButtons(id)
-    });
-    // console.log("this.model.takeFilmInfo(id)=", this.model.takeFilmInfo(id));
+    this.model.takeFilmInfo(id)
+      .then(data => {
+        this.view.createFilmPage(data, id);
+      });
+
   }
 
   //handle Pagination
@@ -58,7 +111,7 @@ export default class Controller {
       });
   }
   //handle film page
-  handleCreateFilmPage(id) {  
+  handleCreateFilmPage(id) {
     let result = this.model.takeFilmInfoFromLocalStorage(id);
     //console.log("result =", result);
     return this.view.dataAboutFilmFromLocalStorage = result;
@@ -74,20 +127,20 @@ export default class Controller {
 
     const data = this.model.getViewLaterFilmsFromLS();
 
-    if(data.length === 0) {
-      this.view.clearCardsList(); 
+    if (data.length === 0) {
+      this.view.clearCardsList();
       this.view.ifNothingToRender();
     } else {
       this.view.clearCardsList();
       this.view.cardsRender(data);
-    } 
+    }
   }
 
   handleFavorites() {
 
     const data = this.model.getFavoriteFilmsFromLS();
 
-    if(data.length === 0) {
+    if (data.length === 0) {
       this.view.clearCardsList();
       this.view.deleteAutofocus();
       this.view.ifNothingToRender();
@@ -103,7 +156,7 @@ export default class Controller {
 
     const data = this.model.getViewedFilmsFromLS();
 
-    if(data.length === 0) {
+    if (data.length === 0) {
       this.view.clearCardsList();
       this.view.deleteAutofocus();
       this.view.ifNothingToRender();
@@ -112,6 +165,17 @@ export default class Controller {
       this.view.deleteAutofocus();
       this.view.cardsRender(data);
     }
+  }
+
+  handleFilmotekaLink(e) {
+    this.routing.pushState(e);
+    this.view.makeFilmotekaPage();
+    this.handleViewLaterFilms();
+  }
+
+  handlePopState(e) {
+    this.routing.popState(e);
+
   }
 
 }

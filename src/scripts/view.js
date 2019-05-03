@@ -2,52 +2,12 @@ import { EventEmitter } from "events";
 import debounce from "debounce";
 import noavailable from "../img/noavailable.png";
 
-// const card = {
-//     "Title": "Guardians of the Galaxy Vol. 2",
-//     "Year": "2017",
-//     "Rated": "PG-13",
-//     "Released": "05 May 2017",
-//     "Runtime": "136 min",
-//     "Genre": "Action, Adventure, Comedy, Sci-Fi",
-//     "Director": "James Gunn",
-//     "Writer": "James Gunn, Dan Abnett (based on the Marvel comics by), Andy Lanning (based on the Marvel comics by), Steve Englehart (Star-Lord created by), Steve Gan (Star-Lord created by), Jim Starlin (Gamora and Drax created by), Stan Lee (Groot created by), Larry Lieber (Groot created by), Jack Kirby (Groot created by), Bill Mantlo (Rocket Raccoon created by), Keith Giffen (Rocket Raccoon created by), Steve Gerber (Howard the Duck created by), Val Mayerik (Howard the Duck created by)",
-//     "Actors": "Chris Pratt, Zoe Saldana, Dave Bautista, Vin Diesel",
-//     "Plot": "The Guardians struggle to keep together as a team while dealing with their personal family issues, notably Star-Lord's encounter with his father the ambitious celestial being Ego.",
-//     "Language": "English",
-//     "Country": "USA",
-//     "Awards": "Nominated for 1 Oscar. Another 12 wins & 42 nominations.",
-//     "Poster": "https://m.media-amazon.com/images/M/MV5BMTg2MzI1MTg3OF5BMl5BanBnXkFtZTgwNTU3NDA2MTI@._V1_SX300.jpg",
-//     "Ratings": [
-//     {
-//     "Source": "Internet Movie Database",
-//     "Value": "7.7/10"
-//     },
-//     {
-//     "Source": "Rotten Tomatoes",
-//     "Value": "83%"
-//     },
-//     {
-//     "Source": "Metacritic",
-//     "Value": "67/100"
-//     }
-//     ],
-//     "Metascore": "67",
-//     "imdbRating": "7.7",
-//     "imdbVotes": "458,168",
-//     "imdbID": "tt3896198",
-//     "Type": "movie",
-//     "DVD": "22 Aug 2017",
-//     "BoxOffice": "$389,804,217",
-//     "Production": "Walt Disney Pictures",
-//     "Website": "https://marvel.com/guardians",
-//     "Response": "True"
-// };
-
 export default class View extends EventEmitter {
     constructor() {
         super();
 
         this.app = document.querySelector("#app");
+
         this.startPage();
         this.mainPage();
 
@@ -75,9 +35,12 @@ export default class View extends EventEmitter {
         };
 
         this.app.addEventListener("click", this.setListener.bind(this));
+        window.addEventListener('popstate', this.popStateEmit.bind(this));
     }
 
+
     setListener(e) {
+
         if (e.target.textContent === "Очередь просмотра") {
             this.emit("onViewLaterFilmsBtn");
         }
@@ -88,6 +51,30 @@ export default class View extends EventEmitter {
         if (e.target.textContent === "Просмотренные") {
             this.emit("onViewedFilmsBtn");
         }
+
+        if (e.target.textContent === "Моя фильмотека") {
+            this.emit("onFilmotekaLink", e);
+        }
+
+        if (e.target.textContent === "Главная страница") {
+            this.emit("onMainLink", e);
+        }
+
+        if(e.target.closest("a") === null) {
+            return;
+        } 
+
+        if (e.target.closest("a").classList.value === 'logo') {
+            this.emit("onLogoLink", e);
+        }
+        if (e.target.closest("a").classList.value === 'card-link') {
+            this.emit("onCardLink", e);
+        }
+        
+    }
+
+    popStateEmit(e) {
+        this.emit("onPopState", e);
     }
 
     startPage() {
@@ -98,6 +85,7 @@ export default class View extends EventEmitter {
     clearStarMaintPage() {
         this.app.innerHTML = "";
     }
+
     container(root) {
         const container = document.createElement("div");
         container.classList.add("container");
@@ -125,72 +113,6 @@ export default class View extends EventEmitter {
         const mainPage = document.createElement("a");
         const myFilmoteka = document.createElement("a");
 
-        // start routing
-        myFilmoteka.addEventListener("click", e => {
-            if (e.target.tagName !== "A") return;
-            const state = {
-                page: e.target.getAttribute("href")
-            };
-
-            this.makeFilmotekaPage();
-            history.pushState(state, "", state.page);
-            e.preventDefault();
-            return this.emit("onViewLaterFilmsBtn");
-        });
-        //const returnFindsearch = localStorage.getItem("find");
-        window.addEventListener("popstate", e => {
-            e.preventDefault();
-            //console.log('model in routing=', this.model);
-            //if (document.location.pathname === "/" && returnFindsearch !==null) {
-            if (document.location.pathname === "/") {
-                this.clearStarMaintPage();
-                this.startPage();
-                this.mainPage();
-                this.emit("onBackToSearchResults");
-                //this.updateCardsList(model);
-                history.replaceState({}, "", "");
-            }
-        });
-
-        mainPage.addEventListener("click", e => {
-            e.preventDefault();
-            if (e.target.tagName !== "A") return;
-            this.clearStarMaintPage();
-            this.startPage();
-            this.mainPage();
-            // const state = {
-            //   page: e.target.getAttribute("href")
-            // };
-            history.pushState({}, "", "/");
-            // history.replaceState({}, "", "");
-        });
-
-        logo.addEventListener("click", e => {
-            e.preventDefault();
-            //if (e.target.tagName !== "A") return;
-            this.clearStarMaintPage();
-            this.startPage();
-            this.mainPage();
-            // const state = {
-            //   page: e.target.getAttribute("href")
-            // };
-            history.pushState({}, "", "/");
-        });
-
-        window.addEventListener("popstate", e => {
-            e.preventDefault();
-            if (document.location.pathname === "/library.html") {
-                this.clearStartMainPage();
-                this.makeFilmotekaPage();
-                this.emit("onViewLaterFilmsBtn");
-                // const state = {
-                //   page: e.target.getAttribute("href")
-                // };
-                history.replaceState({}, "", "library.html");
-            }
-        });
-
-        // end routing
 
         header.classList.add("header");
         headerCont.classList.add('header-container');
@@ -199,8 +121,8 @@ export default class View extends EventEmitter {
         menu.classList.add("menu");
         menuItemOne.classList.add("menu-item");
         menuItemTwo.classList.add("menu-item");
-        mainPage.classList.add("menu-link");
-        myFilmoteka.classList.add("menu-link");
+        mainPage.classList.add("main-page-link");
+        myFilmoteka.classList.add("filmoteka-link");
 
         mainPage.setAttribute("href", "/");
         myFilmoteka.setAttribute("href", "library.html");
@@ -290,38 +212,6 @@ export default class View extends EventEmitter {
         link.classList.add("card-link");
 
         link.addEventListener("click", this.getFilmID.bind(this));
-        //start changing film card attribute
-        //link.setAttribute("id", card.imdbID);
-        //link.setAttribute("href", card.imdbID);
-
-        // start routing for card==============================================
-
-        link.addEventListener("click", e => {
-            e.preventDefault();
-            const idTarget = e.target.closest("a");
-            //const idT = idTarget.getAttribute("id");
-            const idT = idTarget.getAttribute("href");
-            // console.log(idT);
-            const state = {
-                page: idT
-            };
-            // console.log(state.page);
-            history.pushState(state, "", "movie.html?imdbID=" + state.page);
-            window.addEventListener("popstate", e => {
-                e.preventDefault();
-                if (document.location.pathname === "/") {
-                    this.clearStarMaintPage();
-                    this.startPage();
-                    this.mainPage();
-                    history.replaceState(state, "", "");
-                } else if (document.location.pathname === "/movie.html") {
-                    this.emit("onFilmID", idT);
-                    history.replaceState(state, "", "movie.html?imdbID=" + state.page);
-                }
-            });
-        });
-
-        // end routing for card===================================================
 
         let imgSrc;
         card.Poster === "N/A" ? (imgSrc = noavailable) : (imgSrc = card.Poster);
@@ -346,7 +236,7 @@ export default class View extends EventEmitter {
     }
 
     makeCardPage(card, id) {
-        // console.log('inside makeCard');
+
         const container = this.container(this.app);
 
         let cardRating =
@@ -453,36 +343,25 @@ export default class View extends EventEmitter {
     //take library list name and action type (add/delete) from btn
     takeListNameAndAction(event) {
         let libraryListName = event.target.getAttribute("library-list");
-        //add action
-        //console.log('event=', event);
         let action = event.target.getAttribute("action");
-
         let result = { libraryListName, action };
-        //console.log("result=", result);
 
         return this.emit("onHandleList", result);
     }
 
-    //
     getDataAboutFilmFromLocalStorage(id) {
-        //console.log('id=', id);
         this.emit("onCreateFilmPage", id);
     }
 
     createFilmPageButtons(id, root) {
-        this.getDataAboutFilmFromLocalStorage(id);
-        // console.log(
-        //   "this.dataAboutFilmFromLocalStorage=",
-        //   this.dataAboutFilmFromLocalStorage
-        // );
 
-        //viewedFilms
+        this.getDataAboutFilmFromLocalStorage(id);
         const viewed = document.createElement("button");
-        //console.log('this.addAttribute=', this.addAttribute);
+
         this.addAttribute(viewed, "viewedFilms");
-        //console.log("viewed=", viewed);
+
         viewed.classList.add("button");
-        //1 check for existing in some list and set a label and action attribute
+
         if (!this.dataAboutFilmFromLocalStorage.viewedFilms) {
             this.addActionAtrribute(viewed, "add");
             viewed.textContent = this.filmPageBtnText.viewedFilms.add;
@@ -499,6 +378,7 @@ export default class View extends EventEmitter {
         const planed = document.createElement("button");
         planed.classList.add("button");
         this.addAttribute(planed, "viewLaterFilms");
+
         //1 check for existing in some list and set a label
         if (!this.dataAboutFilmFromLocalStorage.viewLaterFilms) {
             this.addActionAtrribute(planed, "add");
@@ -534,13 +414,8 @@ export default class View extends EventEmitter {
 
     changeActionAndLabel(event) {
         if (event.target.nodeName !== "BUTTON") return;
-        // console.log("inside changeActionAndLabel");
         let action = event.target.getAttribute("action");
         let list = event.target.getAttribute("library-list");
-        // console.log("action =", action);
-        // console.log("list =", list);
-        // console.log("action === add", action === "add");
-        // console.log("action === add", action === "add");
         let label = "";
         if (action === "add") {
             action = "remove";
@@ -581,26 +456,17 @@ export default class View extends EventEmitter {
 
     //render search results
     updateCardsList(model) {
-        // console.log('model in view', model);
-        // console.log("model.queryFilmList=", model.queryFilmList);
-        // console.log('lastQueryTotal=', lastQueryTotal);
-        // console.log('model.queryFilmList=', model.queryFilmList);
-        // const cardList = this.cardList(container);
-        // console.log("model.queryFilmList=", model.queryFilmList);
 
         const cardList = document.querySelector(".card-list");
         const titleToTop = document.querySelector('.title');
-        // cardList.addEventListener('click', this.openFilmPage.bind(this));
 
         this.clearCardsList();
         titleToTop.classList.add('title-padding');
-        // model.queryFilmList;
-        //console.log("arrayOfFilms=", arrayOfFilms);
+
         let items = [];
         model.queryFilmList.forEach(item => {
-            // console.log("item=", item);
+
             let newCard = this.makeCard(item);
-            // console.log("newCard=", newCard);
             items.push(newCard);
             cardList.append(newCard);
         });
@@ -629,11 +495,7 @@ export default class View extends EventEmitter {
         let btnType = event.target.attributes.btnname.value;
         let currPage = event.target.attributes.currPage.value;
         let numPages = event.target.attributes.numpages.value;
-        // console.log("event=",event);
-        // console.log("btnType=",btnType);
-        // console.log("currPage=", currPage);
-        // console.log("numPages=", numPages);
-        // console.log("this=", this);
+
         return this.emit("onPagination", btnType, currPage, numPages);
     }
 
@@ -645,7 +507,7 @@ export default class View extends EventEmitter {
         btn.setAttribute("numPages", numPages);
         if (btnName === "Next" || btnName === "Prev") {
             btn.textContent = btnName;
-            // console.log('this=',this);
+
             if (currPage === 1 && btnName === "Prev") {
                 btn.disabled = true;
                 btn.classList.add("notactiveBtn");
@@ -661,7 +523,7 @@ export default class View extends EventEmitter {
             btn.disabled = true;
             btn.classList.add("notactiveBtn");
         }
-        // console.log("btn in createPaginationButton=", btn);
+
         return btn;
     }
 
@@ -671,22 +533,22 @@ export default class View extends EventEmitter {
     }
 
     makeLibraryButton(text, root) {
-        //console.log("this=", this);
+
         const button = document.createElement("button");
         button.classList.add("button");
-        // for my filmoteka
+
         button.classList.add("btn-filmoteka");
-        //button.classList.add("activ-btn");
+
         button.textContent = text;
         button.addEventListener("click", this.switchBtn);
         root.append(button);
     }
     //switch marked buttons
     switchBtn(event) {
-        //console.log('event', event);
+
         if (event.target.nodeName !== "BUTTON") return;
         const parentNode = event.target.parentNode;
-        //console.log('parentNode=', parentNode);
+
         parentNode.childNodes.forEach(node => node.classList.remove("activ-btn"));
         event.target.classList.add("activ-btn");
     }
@@ -707,9 +569,7 @@ export default class View extends EventEmitter {
 
         const firstBtn = buttons.querySelector("button");
         firstBtn.classList.add("activ-btn");
-        //console.log('model=', model);
-        //console.log("this=", this);
-        //firstBtn.autofocus = true;
+
     }
 
     deleteAutofocus() {
@@ -736,20 +596,16 @@ export default class View extends EventEmitter {
 
     //create film page
     getFilmID(event) {
-        // console.log("event=", event);
-        // let parenDiv=event.target.closest('div');
-        // console.log("parenDiv=", parenDiv);
+
         let target = event.target.closest("a");
-        // console.log("target=", target);
-        //let id = target.getAttribute("id");
         let id = target.getAttribute("href");
         return this.emit("onFilmID", id);
-        // console.log("id=", id);
+
     }
 
     //show film page
     createFilmPage(data, id) {
-        // console.log('data in view=', data);
+
         this.clearStarMaintPage();
         this.startPage();
         this.makeCardPage(data, id);
